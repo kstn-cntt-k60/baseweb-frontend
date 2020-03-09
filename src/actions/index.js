@@ -43,8 +43,9 @@ export const loginPreviousUrl = url => ({
   url
 });
 
-export const logoutAction = () => ({
-  type: LOGOUT
+export const logoutAction = (previousUrl = "/") => ({
+  type: LOGOUT,
+  previousUrl
 });
 
 export const loginStorageChanged = auth => ({

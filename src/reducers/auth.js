@@ -4,8 +4,7 @@ import {
   LOGIN_FAILED,
   LOGIN_PREVIOUS_URL,
   LOGOUT,
-  LOGIN_STORAGE_CHANGED,
-  API_REQUEST_UNAUTHORIZED
+  LOGIN_STORAGE_CHANGED
 } from "../actions";
 
 export const STATE_INIT = 1;
@@ -41,13 +40,10 @@ const auth = (state = initialState, action) => {
       return { ...state, previousUrl: action.url };
 
     case LOGOUT:
-      return initialState;
+      return { ...initialState, previousUrl: action.previousUrl };
 
     case LOGIN_STORAGE_CHANGED:
       return { ...initialState, ...action.auth };
-
-    case API_REQUEST_UNAUTHORIZED:
-      return { ...initialState, previousUrl: action.url };
 
     default:
       return state;

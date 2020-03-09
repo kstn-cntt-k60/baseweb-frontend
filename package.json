@@ -4,9 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --mode development",
+    "start": "webpack-dev-server --mode development --content-base ./build --hot",
     "build": "webpack --mode production",
-    "eslint": "eslint --fix ."
+    "eslint": "eslint --fix ./src"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

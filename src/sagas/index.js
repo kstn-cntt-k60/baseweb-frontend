@@ -70,7 +70,8 @@ function* apiRequestSaga(action) {
   );
 
   if (response.status === 401) {
-    yield put(logoutAction());
+    const previousUrl = yield select(state => state.auth.previousUrl);
+    yield put(logoutAction(previousUrl));
   } else if (response.status === 200) {
     const json = yield call(() => response.json());
     yield put({ type: action.actionType, body: json });

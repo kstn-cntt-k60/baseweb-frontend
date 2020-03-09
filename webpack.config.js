@@ -18,7 +18,7 @@ module.exports = (_env, _options) => ({
     index: "./src/index.js"
   },
   output: {
-    filename: "[name].[contenthash].js",
+    filename: "[name].[hash].js",
     path: path.resolve(__dirname, "./build"),
     publicPath: "/"
   },
@@ -38,7 +38,7 @@ module.exports = (_env, _options) => ({
     rules: [
       {
         test: /\.js$/,
-        exclude: [/node_modules/],
+        exclude: /node_modules/,
         use: ["babel-loader"]
       }
     ]
