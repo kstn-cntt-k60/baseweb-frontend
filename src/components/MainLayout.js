@@ -13,6 +13,7 @@ import { logoutAction } from "../actions";
 import { connect } from "react-redux";
 
 import NavBar, { navBarWidth, drawerHeader } from "./NavBar";
+import { STATE_INIT } from "../reducers/auth";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   drawerHeader: drawerHeader(theme)
 }));
 
-const MainLayout = ({ children, onClickLogout }) => {
+const MainLayout = ({ loginEnabled, children, onClickLogout }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
 
@@ -93,9 +94,13 @@ const MainLayout = ({ children, onClickLogout }) => {
           </Typography>
 
           <Link to="/login">
-            <Typography variant="h4" noWrap>
-              Login
-            </Typography>
+            {loginEnabled ? (
+              <Typography variant="h4" noWrap>
+                Login
+              </Typography>
+            ) : (
+              ""
+            )}
           </Link>
           <Button onClick={onClickLogout}>Logout</Button>
         </Toolbar>
@@ -115,7 +120,9 @@ const MainLayout = ({ children, onClickLogout }) => {
   );
 };
 
-const mapState = () => ({});
+const mapState = state => ({
+  loginEnabled: state.auth.state === STATE_INIT
+});
 
 const mapDispatch = dispatch => ({
   onClickLogout: () => dispatch(logoutAction())

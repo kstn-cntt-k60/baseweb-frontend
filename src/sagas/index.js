@@ -15,7 +15,8 @@ import {
   ADD_SECURITY_GROUP,
   apiPost,
   ADDED_SECURITY_GROUP,
-  ADD_SECURITY_GROUP_FAILED
+  ADD_SECURITY_GROUP_FAILED,
+  closeAddSecurityGroupDialog
 } from "../actions";
 import { apiLogin } from "./api";
 
@@ -112,6 +113,7 @@ function* addSecurityGroupSaga(action) {
 function* addedSecurityGroupSaga() {
   const sequence = yield select(state => state.notifications.sequence);
   yield put(pushSuccessNotification(sequence, "Added sucessfully"));
+  yield put(closeAddSecurityGroupDialog());
 }
 
 function* addSecurityGroupFailedSaga() {
