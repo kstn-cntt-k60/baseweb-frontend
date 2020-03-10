@@ -7,6 +7,7 @@ import {
   DialogActions,
   TextField,
   Button,
+  CircularProgress,
   makeStyles
 } from "@material-ui/core";
 import { connect } from "react-redux";
@@ -51,7 +52,7 @@ const AddSecurityGroupDialog = ({
       </DialogContent>
       <DialogActions>
         {failed ? <h3>Failed</h3> : ""}
-        {loading ? <h3>Loading...</h3> : ""}
+        {loading ? <CircularProgress /> : ""}
         <Button onClick={onClose} variant="contained" color="secondary">
           Cancel
         </Button>

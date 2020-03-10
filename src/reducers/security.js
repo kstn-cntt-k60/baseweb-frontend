@@ -57,7 +57,14 @@ const security = (state = initialState, action) => {
       return { ...state, addSecurityGroupState: GROUP_LOADING };
 
     case ADDED_SECURITY_GROUP:
-      return { ...state, addSecurityGroupState: GROUP_INITIAL };
+      return {
+        ...state,
+        addSecurityGroupState: GROUP_INITIAL,
+        securityGroups: {
+          ...state.securityGroups,
+          [action.body.securityGroup.id]: action.body.securityGroup
+        }
+      };
 
     case ADD_SECURITY_GROUP_FAILED:
       return { ...state, addSecurityGroupState: GROUP_FAILED };
