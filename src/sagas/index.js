@@ -16,7 +16,10 @@ import {
   apiPost,
   ADDED_SECURITY_GROUP,
   ADD_SECURITY_GROUP_FAILED,
-  closeAddSecurityGroupDialog
+  closeAddSecurityGroupDialog,
+  ADD_PARTY,
+  ADDED_PARTY,
+  ADD_PARTY_FAILED
 } from "../actions";
 import { apiLogin } from "./api";
 
@@ -116,9 +119,30 @@ function* addedSecurityGroupSaga() {
   yield put(closeAddSecurityGroupDialog());
 }
 
-function* addSecurityGroupFailedSaga() {
+function* addSecurityGroupFailedSaga(action) {
   const sequence = yield select(state => state.notifications.sequence);
-  yield put(pushErrorNotification(sequence, "Add failed!!!"));
+  yield put(pushErrorNotification(sequence, `Add failed: ${action.status}!!!`));
+}
+
+function* addPartySaga(action) {
+  yield put(
+    apiPost(
+      "/api/account/add-party",
+      action.body,
+      ADDED_PARTY,
+      ADD_PARTY_FAILED
+    )
+  );
+}
+
+function* addedPartySaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Add successfully!!!"));
+}
+
+function* addPartyFailedSaga(action) {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushErrorNotification(sequence, `Add failed: ${action.status}!!!`));
 }
 
 function* rootSaga() {
@@ -133,6 +157,10 @@ function* rootSaga() {
   yield takeEvery(ADD_SECURITY_GROUP, addSecurityGroupSaga);
   yield takeEvery(ADDED_SECURITY_GROUP, addedSecurityGroupSaga);
   yield takeEvery(ADD_SECURITY_GROUP_FAILED, addSecurityGroupFailedSaga);
+
+  yield takeEvery(ADD_PARTY, addPartySaga);
+  yield takeEvery(ADDED_PARTY, addedPartySaga);
+  yield takeEvery(ADD_PARTY_FAILED, addPartyFailedSaga);
 }
 
 export default rootSaga;

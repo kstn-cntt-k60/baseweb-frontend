@@ -8,6 +8,8 @@ import SecurityGroup from "./components/SecurityGroup";
 import SecurityPermission from "./components/SecurityPermission";
 import AddSecurityGroupDialog from "./components/AddSecurityGroupDialog";
 import Notifications from "./components/Notifications";
+import Party from "./components/Party";
+import AddPartyDialog from "./components/AddPartyDialog";
 
 const App = () => (
   <React.Fragment>
@@ -22,6 +24,12 @@ const App = () => (
             <h2>HOME PAGE</h2>
           </MainLayout>
         </PublicRoute>
+
+        <PrivateRoute path="/account/party">
+          <MainLayout>
+            <Party />
+          </MainLayout>
+        </PrivateRoute>
 
         <PrivateRoute path="/security/group">
           <MainLayout>
@@ -49,6 +57,7 @@ const App = () => (
       </Switch>
     </BrowserRouter>
 
+    <AddPartyDialog />
     <AddSecurityGroupDialog />
     <Notifications />
   </React.Fragment>

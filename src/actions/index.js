@@ -21,6 +21,13 @@ export const ADD_SECURITY_GROUP = "ADD_SECURITY_GROUP";
 export const ADDED_SECURITY_GROUP = "ADDED_SECURITY_GROUP";
 export const ADD_SECURITY_GROUP_FAILED = "ADD_SECURITY_GROUP_FAILED";
 
+export const OPEN_ADD_PARTY_DIALOG = "OPEN_ADD_PARTY_DIALOG";
+export const CLOSE_ADD_PARTY_DIALOG = "CLOSE_ADD_PARTY_DIALOG";
+
+export const ADD_PARTY = "ADD_PARTY";
+export const ADDED_PARTY = "ADDED_PARTY";
+export const ADD_PARTY_FAILED = "ADD_PARTY_FAILED";
+
 export const loginAction = (username, password) => ({
   type: LOGIN,
   username,
@@ -98,4 +105,17 @@ export const removeNotification = id => ({
 export const addSecurityGroup = name => ({
   type: ADD_SECURITY_GROUP,
   name
+});
+
+export const openAddPartyDialog = () => ({
+  type: OPEN_ADD_PARTY_DIALOG
+});
+
+export const closeAddPartyDialog = () => ({
+  type: CLOSE_ADD_PARTY_DIALOG
+});
+
+export const addParty = body => ({
+  type: ADD_PARTY,
+  body
 });
