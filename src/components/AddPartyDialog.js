@@ -175,6 +175,7 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
 
       onAddParty({
         partyTypeId: partyType,
+        description,
         firstName,
         middleName,
         lastName,

@@ -27,6 +27,9 @@ export const CLOSE_ADD_PARTY_DIALOG = "CLOSE_ADD_PARTY_DIALOG";
 export const ADD_PARTY = "ADD_PARTY";
 export const ADDED_PARTY = "ADDED_PARTY";
 export const ADD_PARTY_FAILED = "ADD_PARTY_FAILED";
+export const FETCH_PERSON_LIST = "FETCH_PERSON_LIST";
+export const GOT_PERSON_LIST = "GOT_PERSON_LIST";
+export const PERSON_CONFIG_TABLE = "PERSON_CONFIG_TABLE";
 
 export const loginAction = (username, password) => ({
   type: LOGIN,
@@ -118,4 +121,16 @@ export const closeAddPartyDialog = () => ({
 export const addParty = body => ({
   type: ADD_PARTY,
   body
+});
+
+export const fetchPersonList = () => ({
+  type: FETCH_PERSON_LIST
+});
+
+export const personConfigTable = (page, pageSize, sortedBy, sortOrder) => ({
+  type: PERSON_CONFIG_TABLE,
+  page,
+  pageSize,
+  sortedBy,
+  sortOrder
 });

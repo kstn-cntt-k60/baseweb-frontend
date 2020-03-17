@@ -13,13 +13,16 @@ import {
   pushSuccessNotification,
   SAVED_GROUP_PERMISSIONS,
   ADD_SECURITY_GROUP,
+  apiGet,
   apiPost,
   ADDED_SECURITY_GROUP,
   ADD_SECURITY_GROUP_FAILED,
   closeAddSecurityGroupDialog,
   ADD_PARTY,
   ADDED_PARTY,
-  ADD_PARTY_FAILED
+  ADD_PARTY_FAILED,
+  FETCH_PERSON_LIST,
+  GOT_PERSON_LIST
 } from "../actions";
 import { apiLogin } from "./api";
 
@@ -138,11 +141,22 @@ function* addPartySaga(action) {
 function* addedPartySaga() {
   const sequence = yield select(state => state.notifications.sequence);
   yield put(pushSuccessNotification(sequence, "Add successfully!!!"));
+  yield* fetchPersonListSaga();
 }
 
 function* addPartyFailedSaga(action) {
   const sequence = yield select(state => state.notifications.sequence);
   yield put(pushErrorNotification(sequence, `Add failed: ${action.status}!!!`));
+}
+
+function* fetchPersonListSaga() {
+  const page = yield select(state => state.account.personPage);
+  const pageSize = yield select(state => state.account.personPageSize);
+  const sortedBy = yield select(state => state.account.personSortedBy);
+  const sortOrder = yield select(state => state.account.personSortOrder);
+
+  const query = `page=${page}&pageSize=${pageSize}&sortedBy=${sortedBy}&sortOrder=${sortOrder}`;
+  yield put(apiGet(`/api/account/view-person?${query}`, GOT_PERSON_LIST));
 }
 
 function* rootSaga() {
@@ -161,6 +175,7 @@ function* rootSaga() {
   yield takeEvery(ADD_PARTY, addPartySaga);
   yield takeEvery(ADDED_PARTY, addedPartySaga);
   yield takeEvery(ADD_PARTY_FAILED, addPartyFailedSaga);
+  yield takeEvery(FETCH_PERSON_LIST, fetchPersonListSaga);
 }
 
 export default rootSaga;
