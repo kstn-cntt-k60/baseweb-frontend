@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { openAddPartyDialog } from "../../actions";
 import { Button, Divider } from "@material-ui/core";
 import PersonTable from "./PersonTable";
+import CustomerTable from "./CustomerTable";
 
 const Party = ({ openDialog }) => {
   return (
@@ -13,6 +14,8 @@ const Party = ({ openDialog }) => {
       </Button>
       <Divider />
       <PersonTable />
+      <Divider />
+      <CustomerTable />
     </div>
   );
 };

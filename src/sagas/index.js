@@ -22,7 +22,9 @@ import {
   ADDED_PARTY,
   ADD_PARTY_FAILED,
   FETCH_PERSON_LIST,
-  GOT_PERSON_LIST
+  GOT_PERSON_LIST,
+  FETCH_CUSTOMER_LIST,
+  GOT_CUSTOMER_LIST
 } from "../actions";
 import { apiLogin } from "./api";
 
@@ -142,6 +144,7 @@ function* addedPartySaga() {
   const sequence = yield select(state => state.notifications.sequence);
   yield put(pushSuccessNotification(sequence, "Add successfully!!!"));
   yield* fetchPersonListSaga();
+  yield* fetchCustomerListSaga();
 }
 
 function* addPartyFailedSaga(action) {
@@ -157,6 +160,16 @@ function* fetchPersonListSaga() {
 
   const query = `page=${page}&pageSize=${pageSize}&sortedBy=${sortedBy}&sortOrder=${sortOrder}`;
   yield put(apiGet(`/api/account/view-person?${query}`, GOT_PERSON_LIST));
+}
+
+function* fetchCustomerListSaga() {
+  const page = yield select(state => state.account.customerPage);
+  const pageSize = yield select(state => state.account.customerPageSize);
+  const sortedBy = yield select(state => state.account.customerSortedBy);
+  const sortOrder = yield select(state => state.account.customerSortOrder);
+
+  const query = `page=${page}&pageSize=${pageSize}&sortedBy=${sortedBy}&sortOrder=${sortOrder}`;
+  yield put(apiGet(`/api/account/view-customer?${query}`, GOT_CUSTOMER_LIST));
 }
 
 function* rootSaga() {
@@ -176,6 +189,7 @@ function* rootSaga() {
   yield takeEvery(ADDED_PARTY, addedPartySaga);
   yield takeEvery(ADD_PARTY_FAILED, addPartyFailedSaga);
   yield takeEvery(FETCH_PERSON_LIST, fetchPersonListSaga);
+  yield takeEvery(FETCH_CUSTOMER_LIST, fetchCustomerListSaga);
 }
 
 export default rootSaga;

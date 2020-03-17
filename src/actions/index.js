@@ -27,9 +27,14 @@ export const CLOSE_ADD_PARTY_DIALOG = "CLOSE_ADD_PARTY_DIALOG";
 export const ADD_PARTY = "ADD_PARTY";
 export const ADDED_PARTY = "ADDED_PARTY";
 export const ADD_PARTY_FAILED = "ADD_PARTY_FAILED";
+
 export const FETCH_PERSON_LIST = "FETCH_PERSON_LIST";
 export const GOT_PERSON_LIST = "GOT_PERSON_LIST";
 export const PERSON_CONFIG_TABLE = "PERSON_CONFIG_TABLE";
+
+export const FETCH_CUSTOMER_LIST = "FETCH_CUSTOMER_LIST";
+export const GOT_CUSTOMER_LIST = "GOT_CUSTOMER_LIST";
+export const CUSTOMER_CONFIG_TABLE = "CUSTOMER_CONFIG_TABLE";
 
 export const loginAction = (username, password) => ({
   type: LOGIN,
@@ -129,6 +134,18 @@ export const fetchPersonList = () => ({
 
 export const personConfigTable = (page, pageSize, sortedBy, sortOrder) => ({
   type: PERSON_CONFIG_TABLE,
+  page,
+  pageSize,
+  sortedBy,
+  sortOrder
+});
+
+export const fetchCustomerList = () => ({
+  type: FETCH_CUSTOMER_LIST
+});
+
+export const customerConfigTable = (page, pageSize, sortedBy, sortOrder) => ({
+  type: CUSTOMER_CONFIG_TABLE,
   page,
   pageSize,
   sortedBy,
