@@ -2,7 +2,14 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import { personConfigTable, fetchPersonList } from "../../actions";
+import {
+  personConfigTable,
+  fetchPersonList,
+  openEditPersonDialog,
+  openYesNoDialog,
+  apiPost,
+  DELETED_PERSON
+} from "../../actions";
 import {
   Paper,
   TableContainer,
@@ -15,11 +22,17 @@ import {
   TablePagination,
   makeStyles
 } from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+
 import { getGender, formatTime, formatDate } from "../../util";
 
 const useStyles = makeStyles(() => ({
   tableHead: {
     fontWeight: "bold"
+  },
+  iconButton: {
+    cursor: "pointer"
   }
 }));
 
@@ -33,7 +46,9 @@ const PersonTable = ({
   sortedBy,
   sortOrder,
   fetchPersonList,
-  configTable
+  configTable,
+  openEditDialog,
+  openYesNoToDelete
 }) => {
   const classes = useStyles();
 
@@ -55,6 +70,14 @@ const PersonTable = ({
     } else {
       configTable(page, pageSize, name, sortOrder);
     }
+  };
+
+  const onEdit = id => {
+    openEditDialog(id);
+  };
+
+  const onDelete = id => {
+    openYesNoToDelete(id);
   };
 
   return (
@@ -103,6 +126,8 @@ const PersonTable = ({
                 </TableSortLabel>
               </TableCell>
               <TableCell className={classes.tableHead}>Description</TableCell>
+              <TableCell className={classes.tableHead}></TableCell>
+              <TableCell className={classes.tableHead}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -116,6 +141,18 @@ const PersonTable = ({
                 <TableCell>{e.createdAt}</TableCell>
                 <TableCell>{e.updatedAt}</TableCell>
                 <TableCell>{e.description}</TableCell>
+                <TableCell>
+                  <EditIcon
+                    className={classes.iconButton}
+                    onClick={() => onEdit(e.id)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <DeleteIcon
+                    className={classes.iconButton}
+                    onClick={() => onDelete(e.id)}
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -171,7 +208,15 @@ const mapState = createSelector(
 const mapDispatch = dispatch => ({
   fetchPersonList: () => dispatch(fetchPersonList()),
   configTable: (page, pageSize, sortedBy, sortOrder) =>
-    dispatch(personConfigTable(page, pageSize, sortedBy, sortOrder))
+    dispatch(personConfigTable(page, pageSize, sortedBy, sortOrder)),
+  openEditDialog: id => dispatch(openEditPersonDialog(id)),
+  openYesNoToDelete: id =>
+    dispatch(
+      openYesNoDialog(
+        "Do you want to delete this person?",
+        apiPost("/api/account/delete-person", { id }, DELETED_PERSON)
+      )
+    )
 });
 
 export default connect(mapState, mapDispatch)(PersonTable);

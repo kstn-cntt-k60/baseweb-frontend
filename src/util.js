@@ -19,7 +19,8 @@ const zeroPad = (num, size) => {
   return s.substr(s.length - size);
 };
 
-export const formatDate = date => {
+export const formatDate = dateString => {
+  const date = new Date(dateString);
   const day = zeroPad(date.getDate(), 2);
   const month = zeroPad(date.getMonth() + 1, 2);
   const year = date.getFullYear();
@@ -27,7 +28,8 @@ export const formatDate = date => {
   return `${day}/${month}/${year}`;
 };
 
-export const formatTime = date => {
+export const formatTime = dateString => {
+  const date = new Date(dateString);
   const day = zeroPad(date.getDate(), 2);
   const month = zeroPad(date.getMonth() + 1, 2);
   const year = date.getFullYear();
@@ -47,4 +49,20 @@ export const getGender = genderId => {
   } else {
     return "Unknown";
   }
+};
+
+const getUTCDate = d => {
+  const date = new Date(d);
+  const day = date.getUTCDate();
+  const month = date.getUTCMonth() + 1;
+  const year = date.getUTCFullYear();
+
+  return { day, month, year };
+};
+
+export const dateEquals = (dateA, dateB) => {
+  const a = getUTCDate(dateA);
+  const b = getUTCDate(dateB);
+
+  return a.day === b.day && a.month === b.month && a.year === b.year;
 };

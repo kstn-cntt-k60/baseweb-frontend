@@ -36,6 +36,18 @@ export const FETCH_CUSTOMER_LIST = "FETCH_CUSTOMER_LIST";
 export const GOT_CUSTOMER_LIST = "GOT_CUSTOMER_LIST";
 export const CUSTOMER_CONFIG_TABLE = "CUSTOMER_CONFIG_TABLE";
 
+export const OPEN_EDIT_PERSON_DIALOG = "OPEN_EDIT_PERSON_DIALOG";
+export const CLOSE_EDIT_PERSON_DIALOG = "CLOSE_EDIT_PERSON_DIALOG";
+
+export const UPDATE_PERSON = "UPDATE_PERSON";
+export const UPDATED_PERSON = "UPDATED_PERSON";
+export const UPDATE_PERSON_FAILED = "UPDATE_PERSON_FAILED";
+
+export const OPEN_YES_NO_DIALOG = "OPEN_YES_NO_DIALOG";
+export const CLOSE_YES_NO_DIALOG = "CLOSE_YES_NO_DIALOG";
+
+export const DELETED_PERSON = "DELETED_PERSON";
+
 export const loginAction = (username, password) => ({
   type: LOGIN,
   username,
@@ -150,4 +162,28 @@ export const customerConfigTable = (page, pageSize, sortedBy, sortOrder) => ({
   pageSize,
   sortedBy,
   sortOrder
+});
+
+export const openEditPersonDialog = id => ({
+  type: OPEN_EDIT_PERSON_DIALOG,
+  id
+});
+
+export const closeEditPersonDialog = () => ({
+  type: CLOSE_EDIT_PERSON_DIALOG
+});
+
+export const updatePersonAction = body => ({
+  type: UPDATE_PERSON,
+  body
+});
+
+export const openYesNoDialog = (title, action) => ({
+  type: OPEN_YES_NO_DIALOG,
+  title,
+  action
+});
+
+export const closeYesNoDialog = () => ({
+  type: CLOSE_YES_NO_DIALOG
 });

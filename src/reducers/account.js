@@ -1,9 +1,14 @@
 import {
   OPEN_ADD_PARTY_DIALOG,
   CLOSE_ADD_PARTY_DIALOG,
+  OPEN_EDIT_PERSON_DIALOG,
+  CLOSE_EDIT_PERSON_DIALOG,
   ADD_PARTY,
   ADDED_PARTY,
   ADD_PARTY_FAILED,
+  UPDATE_PERSON,
+  UPDATED_PERSON,
+  UPDATE_PERSON_FAILED,
   GOT_PERSON_LIST,
   PERSON_CONFIG_TABLE,
   GOT_CUSTOMER_LIST,
@@ -12,13 +17,17 @@ import {
 
 import { arrayToObjectWithId } from "../util";
 
-export const ADD_PARTY_STATE_INIT = "INIT";
-export const ADD_PARTY_STATE_LOADING = "LOADING";
-export const ADD_PARTY_STATE_FAILED = "FAILED";
+export const STATE_INIT = "INIT";
+export const STATE_LOADING = "LOADING";
+export const STATE_FAILED = "FAILED";
 
 const initialState = {
   openAddPartyDialog: false,
-  addPartyState: ADD_PARTY_STATE_INIT,
+  addPartyState: STATE_INIT,
+
+  openEditPersonDialog: false,
+  editPersonState: STATE_INIT,
+  editPersonId: null,
 
   personCount: 0,
   personMap: {},
@@ -37,25 +46,6 @@ const initialState = {
   customerSortOrder: "desc"
 };
 
-const personListToObject = personList =>
-  arrayToObjectWithId(
-    personList.map(p => ({
-      ...p,
-      birthDate: new Date(p.birthDate),
-      createdAt: new Date(p.createdAt),
-      updatedAt: new Date(p.createdAt)
-    }))
-  );
-
-const customerListToObject = customerList =>
-  arrayToObjectWithId(
-    customerList.map(p => ({
-      ...p,
-      createdAt: new Date(p.createdAt),
-      updatedAt: new Date(p.createdAt)
-    }))
-  );
-
 const account = (state = initialState, action) => {
   switch (action.type) {
     case OPEN_ADD_PARTY_DIALOG:
@@ -64,20 +54,45 @@ const account = (state = initialState, action) => {
     case CLOSE_ADD_PARTY_DIALOG:
       return { ...state, openAddPartyDialog: false };
 
+    case OPEN_EDIT_PERSON_DIALOG:
+      return { ...state, openEditPersonDialog: true, editPersonId: action.id };
+
+    case CLOSE_EDIT_PERSON_DIALOG:
+      return { ...state, openEditPersonDialog: false };
+
     case ADD_PARTY:
-      return { ...state, addPartyState: ADD_PARTY_STATE_LOADING };
+      return { ...state, addPartyState: STATE_LOADING };
 
     case ADDED_PARTY:
-      return { ...state, addPartyState: ADD_PARTY_STATE_INIT };
+      return { ...state, addPartyState: STATE_INIT };
 
     case ADD_PARTY_FAILED:
-      return { ...state, addPartyState: ADD_PARTY_STATE_FAILED };
+      return { ...state, addPartyState: STATE_FAILED };
+
+    case UPDATE_PERSON:
+      return {
+        ...state,
+        editPersonState: STATE_LOADING,
+        personUpdatingValue: action.body
+      };
+
+    case UPDATED_PERSON:
+      return {
+        ...state,
+        editPersonState: STATE_INIT
+      };
+
+    case UPDATE_PERSON_FAILED:
+      return {
+        ...state,
+        editPersonState: STATE_FAILED
+      };
 
     case GOT_PERSON_LIST:
       return {
         ...state,
         personCount: action.body.count,
-        personMap: personListToObject(action.body.personList),
+        personMap: arrayToObjectWithId(action.body.personList),
         personIdList: action.body.personList.map(p => p.id)
       };
 
@@ -94,7 +109,7 @@ const account = (state = initialState, action) => {
       return {
         ...state,
         customerCount: action.body.count,
-        customerMap: customerListToObject(action.body.customerList),
+        customerMap: arrayToObjectWithId(action.body.customerList),
         customerIdList: action.body.customerList.map(p => p.id)
       };
 

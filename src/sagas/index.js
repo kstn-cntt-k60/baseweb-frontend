@@ -24,7 +24,12 @@ import {
   FETCH_PERSON_LIST,
   GOT_PERSON_LIST,
   FETCH_CUSTOMER_LIST,
-  GOT_CUSTOMER_LIST
+  GOT_CUSTOMER_LIST,
+  UPDATE_PERSON,
+  UPDATED_PERSON,
+  UPDATE_PERSON_FAILED,
+  DELETED_PERSON,
+  closeYesNoDialog
 } from "../actions";
 import { apiLogin } from "./api";
 
@@ -172,6 +177,30 @@ function* fetchCustomerListSaga() {
   yield put(apiGet(`/api/account/view-customer?${query}`, GOT_CUSTOMER_LIST));
 }
 
+function* updatePersonSaga(action) {
+  yield put(
+    apiPost(
+      "/api/account/update-person",
+      action.body,
+      UPDATED_PERSON,
+      UPDATE_PERSON_FAILED
+    )
+  );
+}
+
+function* updatedPersonSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Saved successfully!!!"));
+  yield* fetchPersonListSaga();
+}
+
+function* deletedPersonSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Deleted successfully!!!"));
+  yield put(closeYesNoDialog());
+  yield* fetchPersonListSaga();
+}
+
 function* rootSaga() {
   yield takeEvery(LOGIN, loginSaga);
   yield takeEvery(LOGIN_SUCEEDED, loginSuceededSaga);
@@ -188,8 +217,13 @@ function* rootSaga() {
   yield takeEvery(ADD_PARTY, addPartySaga);
   yield takeEvery(ADDED_PARTY, addedPartySaga);
   yield takeEvery(ADD_PARTY_FAILED, addPartyFailedSaga);
+
   yield takeEvery(FETCH_PERSON_LIST, fetchPersonListSaga);
   yield takeEvery(FETCH_CUSTOMER_LIST, fetchCustomerListSaga);
+
+  yield takeEvery(UPDATE_PERSON, updatePersonSaga);
+  yield takeEvery(UPDATED_PERSON, updatedPersonSaga);
+  yield takeEvery(DELETED_PERSON, deletedPersonSaga);
 }
 
 export default rootSaga;

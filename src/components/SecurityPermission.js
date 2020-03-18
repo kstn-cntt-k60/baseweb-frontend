@@ -22,7 +22,7 @@ import {
   GOT_ALL_GROUPS_AND_PERMISSIONS,
   SAVED_GROUP_PERMISSIONS
 } from "../actions";
-import { setDifference } from "../util";
+import { setDifference, formatTime } from "../util";
 import AddIcon from "@material-ui/icons/Add";
 
 const TabPanel = props => {
@@ -84,12 +84,9 @@ const PermissionTab = ({
   const canNotSave =
     permissionIdSet.size === storePermissionIdSet.size &&
     [...permissionIdSet].every(value => storePermissionIdSet.has(value));
-  const createdAt = new Date(group.createdAt);
   return (
     <React.Fragment>
-      {`Created at: ${createdAt.toLocaleTimeString(
-        "en-US"
-      )} ${createdAt.toLocaleDateString("vi")}`}
+      {`Created at: ${formatTime(group.createdAt)}`}
       <List>
         {securityPermissions.map(perm => (
           <ListItem key={perm.id}>

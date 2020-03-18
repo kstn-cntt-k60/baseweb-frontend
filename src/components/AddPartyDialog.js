@@ -24,11 +24,7 @@ import {
 import DateFnsUtils from "@date-io/date-fns";
 
 import { closeAddPartyDialog, addParty } from "../actions";
-import {
-  ADD_PARTY_STATE_LOADING,
-  ADD_PARTY_STATE_FAILED,
-  ADD_PARTY_STATE_INIT
-} from "../reducers/account";
+import { STATE_LOADING, STATE_FAILED, STATE_INIT } from "../reducers/account";
 
 const useStyles = makeStyles(theme => ({
   select: {
@@ -155,7 +151,7 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
   const [customerName, setCustomerName] = useState("");
 
   useEffect(() => {
-    if (state === ADD_PARTY_STATE_INIT) {
+    if (state === STATE_INIT) {
       setDescription("");
       setFirstName("");
       setMiddleName("");
@@ -168,11 +164,6 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
 
   const onAdd = () => {
     if (partyType === 1) {
-      const date = new Date(birthDate);
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-
       onAddParty({
         partyTypeId: partyType,
         description,
@@ -180,7 +171,7 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
         middleName,
         lastName,
         genderId: gender,
-        birthDate: `${year}-${month}-${day}`
+        birthDate
       });
     } else if (partyType === 2) {
       onAddParty({
@@ -192,7 +183,7 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
   };
 
   const enableAdd = () => {
-    if (state === ADD_PARTY_STATE_LOADING) return false;
+    if (state === STATE_LOADING) return false;
 
     if (partyType === 1) {
       return firstName !== "" && lastName !== "";
@@ -252,8 +243,8 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
         </div>
       </DialogContent>
       <DialogActions>
-        {state === ADD_PARTY_STATE_LOADING ? <CircularProgress /> : ""}
-        {state === ADD_PARTY_STATE_FAILED ? "Add failed" : ""}
+        {state === STATE_LOADING ? <CircularProgress /> : ""}
+        {state === STATE_FAILED ? "Add failed" : ""}
         <Button onClick={closeDialog} variant="contained" color="secondary">
           Cancel
         </Button>

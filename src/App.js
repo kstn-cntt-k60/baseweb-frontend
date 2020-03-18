@@ -10,6 +10,8 @@ import AddSecurityGroupDialog from "./components/AddSecurityGroupDialog";
 import Notifications from "./components/Notifications";
 import Party from "./components/Party";
 import AddPartyDialog from "./components/AddPartyDialog";
+import EditPersonDialog from "./components/EditPersonDialog";
+import YesNoDialog from "./components/YesNoDialog";
 
 const App = () => (
   <React.Fragment>
@@ -59,6 +61,8 @@ const App = () => (
 
     <AddPartyDialog />
     <AddSecurityGroupDialog />
+    <EditPersonDialog />
+    <YesNoDialog />
     <Notifications />
   </React.Fragment>
 );
