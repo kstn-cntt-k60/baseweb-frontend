@@ -1,0 +1,23 @@
+export const GOT_ALL_GROUPS_AND_PERMISSIONS = "GOT_ALL_GROUPS_AND_PERMISSIONS";
+export const SAVED_GROUP_PERMISSIONS = "SAVED_GROUP_PERMISSIONS";
+
+export const OPEN_ADD_SECURITY_GROUP_DIALOG = "OPEN_ADD_SECURITY_GROUP_DIALOG";
+export const CLOSE_ADD_SECURITY_GROUP_DIALOG =
+  "CLOSE_ADD_SECURITY_GROUP_DIALOG";
+
+export const ADD_SECURITY_GROUP = "ADD_SECURITY_GROUP";
+export const ADDED_SECURITY_GROUP = "ADDED_SECURITY_GROUP";
+export const ADD_SECURITY_GROUP_FAILED = "ADD_SECURITY_GROUP_FAILED";
+
+export const openAddSecurityGroupDialog = () => ({
+  type: OPEN_ADD_SECURITY_GROUP_DIALOG
+});
+
+export const closeAddSecurityGroupDialog = () => ({
+  type: CLOSE_ADD_SECURITY_GROUP_DIALOG
+});
+
+export const addSecurityGroup = name => ({
+  type: ADD_SECURITY_GROUP,
+  name
+});

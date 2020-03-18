@@ -6,10 +6,10 @@ import {
   personConfigTable,
   fetchPersonList,
   openEditPersonDialog,
-  openYesNoDialog,
-  apiPost,
   DELETED_PERSON
-} from "../../actions";
+} from "../../actions/account";
+import { apiPost, openYesNoDialog } from "../../actions";
+
 import {
   Paper,
   TableContainer,

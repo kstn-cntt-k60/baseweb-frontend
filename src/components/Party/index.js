@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { openAddPartyDialog } from "../../actions";
+import { openAddPartyDialog } from "../../actions/account";
 import { Button, Divider } from "@material-ui/core";
 import PersonTable from "./PersonTable";
 import CustomerTable from "./CustomerTable";

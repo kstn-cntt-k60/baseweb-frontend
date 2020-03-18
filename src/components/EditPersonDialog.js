@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import { createSelector } from "reselect";
 
 import {
   Dialog,
@@ -23,7 +24,7 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
-import { closeEditPersonDialog, updatePersonAction } from "../actions";
+import { closeEditPersonDialog, updatePersonAction } from "../actions/account";
 import { STATE_LOADING, STATE_FAILED } from "../reducers/account";
 import { dateEquals } from "../util";
 
@@ -180,7 +181,7 @@ const EditPersonDialog = ({
       </DialogContent>
       <DialogActions>
         {state === STATE_LOADING ? <CircularProgress /> : ""}
-        {state === STATE_FAILED ? "Add failed" : ""}
+        {state === STATE_FAILED ? "Save failed" : ""}
         <Button
           disabled={disabled}
           onClick={onCancel}
@@ -202,18 +203,24 @@ const EditPersonDialog = ({
   );
 };
 
-const mapState = state => ({
-  open: state.account.openEditPersonDialog,
-  state: state.account.editPersonState,
-  person: state.account.personMap[state.account.editPersonId] || {
-    description: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    genderId: 1,
-    birthDate: "2000-01-01T00:00:00.000Z"
-  }
-});
+const mapState = createSelector(
+  state => state.account.openEditPersonDialog,
+  state => state.account.editPersonState,
+  state => state.account.personMap,
+  state => state.account.editPersonId,
+  (open, state, personMap, id) => ({
+    open,
+    state,
+    person: personMap[id] || {
+      description: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      genderId: 1,
+      birthDate: "2000-01-01T00:00:00.000Z"
+    }
+  })
+);
 
 const mapDispatch = dispatch => ({
   closeDialog: () => dispatch(closeEditPersonDialog()),

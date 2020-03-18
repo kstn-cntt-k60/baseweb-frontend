@@ -15,13 +15,14 @@ import {
   ListItem,
   Checkbox
 } from "@material-ui/core";
+
 import {
-  apiGet,
-  apiPost,
   openAddSecurityGroupDialog,
   GOT_ALL_GROUPS_AND_PERMISSIONS,
   SAVED_GROUP_PERMISSIONS
-} from "../actions";
+} from "../actions/security";
+import { apiGet, apiPost } from "../actions";
+
 import { setDifference, formatTime } from "../util";
 import AddIcon from "@material-ui/icons/Add";
 
@@ -143,7 +144,7 @@ const SecurityPermission = ({
     getAllGroupsAndPermissions();
   }, []);
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (_, newValue) => {
     setValue(newValue);
   };
 

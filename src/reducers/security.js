@@ -1,13 +1,14 @@
 import {
   GOT_ALL_GROUPS_AND_PERMISSIONS,
   SAVED_GROUP_PERMISSIONS,
-  LOGOUT,
   OPEN_ADD_SECURITY_GROUP_DIALOG,
   CLOSE_ADD_SECURITY_GROUP_DIALOG,
   ADD_SECURITY_GROUP,
   ADD_SECURITY_GROUP_FAILED,
   ADDED_SECURITY_GROUP
-} from "../actions";
+} from "../actions/security";
+
+import { LOGOUT } from "../actions";
 import { arrayToObjectWithId } from "../util";
 
 export const GROUP_INITIAL = 1;

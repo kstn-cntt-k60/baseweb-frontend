@@ -18,7 +18,10 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-import { closeAddSecurityGroupDialog, addSecurityGroup } from "../actions";
+import {
+  closeAddSecurityGroupDialog,
+  addSecurityGroup
+} from "../actions/security";
 import { GROUP_LOADING, GROUP_FAILED } from "../reducers/security";
 
 const AddSecurityGroupDialog = ({

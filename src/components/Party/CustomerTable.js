@@ -2,7 +2,14 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import { customerConfigTable, fetchCustomerList } from "../../actions";
+import {
+  customerConfigTable,
+  fetchCustomerList,
+  openEditCustomerDialog,
+  DELETED_CUSTOMER
+} from "../../actions/account";
+import { apiPost, openYesNoDialog } from "../../actions";
+
 import {
   Paper,
   TableContainer,
@@ -17,9 +24,15 @@ import {
 } from "@material-ui/core";
 import { formatTime } from "../../util";
 
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+
 const useStyles = makeStyles(() => ({
   tableHead: {
     fontWeight: "bold"
+  },
+  iconButton: {
+    cursor: "pointer"
   }
 }));
 
@@ -33,7 +46,9 @@ const CustomerTable = ({
   sortedBy,
   sortOrder,
   fetchCustomer,
-  configTable
+  configTable,
+  openEdit,
+  openYesNoToDelete
 }) => {
   const classes = useStyles();
 
@@ -55,6 +70,14 @@ const CustomerTable = ({
     } else {
       configTable(page, pageSize, name, sortOrder);
     }
+  };
+
+  const onEdit = id => {
+    openEdit(id);
+  };
+
+  const onDelete = id => {
+    openYesNoToDelete(id);
   };
 
   return (
@@ -91,6 +114,8 @@ const CustomerTable = ({
                 </TableSortLabel>
               </TableCell>
               <TableCell className={classes.tableHead}>Description</TableCell>
+              <TableCell className={classes.tableHead}></TableCell>
+              <TableCell className={classes.tableHead}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,6 +125,18 @@ const CustomerTable = ({
                 <TableCell>{e.createdAt}</TableCell>
                 <TableCell>{e.updatedAt}</TableCell>
                 <TableCell>{e.description}</TableCell>
+                <TableCell>
+                  <EditIcon
+                    className={classes.iconButton}
+                    onClick={() => onEdit(e.id)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <DeleteIcon
+                    className={classes.iconButton}
+                    onClick={() => onDelete(e.id)}
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -153,7 +190,15 @@ const mapState = createSelector(
 const mapDispatch = dispatch => ({
   fetchCustomer: () => dispatch(fetchCustomerList()),
   configTable: (page, pageSize, sortedBy, sortOrder) =>
-    dispatch(customerConfigTable(page, pageSize, sortedBy, sortOrder))
+    dispatch(customerConfigTable(page, pageSize, sortedBy, sortOrder)),
+  openEdit: id => dispatch(openEditCustomerDialog(id)),
+  openYesNoToDelete: id =>
+    dispatch(
+      openYesNoDialog(
+        "Do you want to delete this customer?",
+        apiPost("/api/account/delete-customer", { id }, DELETED_CUSTOMER)
+      )
+    )
 });
 
 export default connect(mapState, mapDispatch)(CustomerTable);

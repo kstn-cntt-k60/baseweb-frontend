@@ -9,11 +9,16 @@ import {
   UPDATE_PERSON,
   UPDATED_PERSON,
   UPDATE_PERSON_FAILED,
+  UPDATE_CUSTOMER,
+  UPDATED_CUSTOMER,
+  UPDATE_CUSTOMER_FAILED,
   GOT_PERSON_LIST,
   PERSON_CONFIG_TABLE,
   GOT_CUSTOMER_LIST,
-  CUSTOMER_CONFIG_TABLE
-} from "../actions";
+  CUSTOMER_CONFIG_TABLE,
+  OPEN_EDIT_CUSTOMER_DIALOG,
+  CLOSE_EDIT_CUSTOMER_DIALOG
+} from "../actions/account";
 
 import { arrayToObjectWithId } from "../util";
 
@@ -28,6 +33,10 @@ const initialState = {
   openEditPersonDialog: false,
   editPersonState: STATE_INIT,
   editPersonId: null,
+
+  openEditCustomerDialog: false,
+  editCustomerState: STATE_INIT,
+  editCustomerId: null,
 
   personCount: 0,
   personMap: {},
@@ -60,6 +69,16 @@ const account = (state = initialState, action) => {
     case CLOSE_EDIT_PERSON_DIALOG:
       return { ...state, openEditPersonDialog: false };
 
+    case OPEN_EDIT_CUSTOMER_DIALOG:
+      return {
+        ...state,
+        openEditCustomerDialog: true,
+        editCustomerId: action.id
+      };
+
+    case CLOSE_EDIT_CUSTOMER_DIALOG:
+      return { ...state, openEditCustomerDialog: false };
+
     case ADD_PARTY:
       return { ...state, addPartyState: STATE_LOADING };
 
@@ -72,8 +91,7 @@ const account = (state = initialState, action) => {
     case UPDATE_PERSON:
       return {
         ...state,
-        editPersonState: STATE_LOADING,
-        personUpdatingValue: action.body
+        editPersonState: STATE_LOADING
       };
 
     case UPDATED_PERSON:
@@ -86,6 +104,24 @@ const account = (state = initialState, action) => {
       return {
         ...state,
         editPersonState: STATE_FAILED
+      };
+
+    case UPDATE_CUSTOMER:
+      return {
+        ...state,
+        editCustomerState: STATE_LOADING
+      };
+
+    case UPDATED_CUSTOMER:
+      return {
+        ...state,
+        editCustomerState: STATE_INIT
+      };
+
+    case UPDATE_CUSTOMER_FAILED:
+      return {
+        ...state,
+        editCustomerState: STATE_FAILED
       };
 
     case GOT_PERSON_LIST:

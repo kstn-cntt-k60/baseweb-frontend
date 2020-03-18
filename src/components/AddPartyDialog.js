@@ -23,7 +23,7 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
-import { closeAddPartyDialog, addParty } from "../actions";
+import { closeAddPartyDialog, addParty } from "../actions/account";
 import { STATE_LOADING, STATE_FAILED, STATE_INIT } from "../reducers/account";
 
 const useStyles = makeStyles(theme => ({

@@ -11,6 +11,7 @@ import Notifications from "./components/Notifications";
 import Party from "./components/Party";
 import AddPartyDialog from "./components/AddPartyDialog";
 import EditPersonDialog from "./components/EditPersonDialog";
+import EditCustomerDialog from "./components/EditCustomerDialog";
 import YesNoDialog from "./components/YesNoDialog";
 
 const App = () => (
@@ -62,6 +63,7 @@ const App = () => (
     <AddPartyDialog />
     <AddSecurityGroupDialog />
     <EditPersonDialog />
+    <EditCustomerDialog />
     <YesNoDialog />
     <Notifications />
   </React.Fragment>
