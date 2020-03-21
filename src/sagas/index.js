@@ -27,7 +27,8 @@ function* loginSaga(action) {
     const body = yield call(() => response.json());
     yield put(loginSuceeded(token, body.userLogin, body.securityPermissions));
   } else {
-    console.log("SERVER PROBLEM!!!");
+    const sequence = yield select(state => state.notifications.sequence);
+    yield put(pushErrorNotification(sequence, "Login failed!!!"));
   }
 }
 
@@ -74,7 +75,6 @@ function* apiRequestSaga(action) {
     const json = yield call(() => response.json());
     yield put({ type: action.actionType, body: json });
   } else {
-    console.log(action.errorActionType);
     if (action.errorActionType) {
       yield put({ type: action.errorActionType, status: response.status });
     } else {

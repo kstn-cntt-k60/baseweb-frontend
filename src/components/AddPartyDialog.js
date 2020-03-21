@@ -73,7 +73,6 @@ const PersonForm = ({
       </FormControl>
       <FormControl className={classes.nameField}>
         <TextField
-          autoFocus
           margin="dense"
           label="Middle Name"
           type="text"
@@ -84,7 +83,6 @@ const PersonForm = ({
       </FormControl>
       <FormControl className={classes.nameField}>
         <TextField
-          autoFocus
           margin="dense"
           label="Last Name"
           type="text"
@@ -210,7 +208,6 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
           </FormControl>
           <FormControl className={classes.textField}>
             <TextField
-              autoFocus
               margin="dense"
               label="Description"
               type="text"

@@ -6,12 +6,15 @@ import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import SecurityGroup from "./components/SecurityGroup";
 import SecurityPermission from "./components/SecurityPermission";
-import AddSecurityGroupDialog from "./components/AddSecurityGroupDialog";
 import Notifications from "./components/Notifications";
 import Party from "./components/Party";
+import UserLogin from "./components/UserLogin";
+
+import AddSecurityGroupDialog from "./components/AddSecurityGroupDialog";
 import AddPartyDialog from "./components/AddPartyDialog";
 import EditPersonDialog from "./components/EditPersonDialog";
 import EditCustomerDialog from "./components/EditCustomerDialog";
+import AddUserLoginDialog from "./components/AddUserLoginDialog";
 import YesNoDialog from "./components/YesNoDialog";
 
 const App = () => (
@@ -31,6 +34,12 @@ const App = () => (
         <PrivateRoute path="/account/party">
           <MainLayout>
             <Party />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/account/user-login">
+          <MainLayout>
+            <UserLogin />
           </MainLayout>
         </PrivateRoute>
 
@@ -64,6 +73,7 @@ const App = () => (
     <AddSecurityGroupDialog />
     <EditPersonDialog />
     <EditCustomerDialog />
+    <AddUserLoginDialog />
     <YesNoDialog />
     <Notifications />
   </React.Fragment>

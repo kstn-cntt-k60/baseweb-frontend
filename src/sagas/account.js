@@ -23,7 +23,10 @@ import {
   UPDATED_CUSTOMER,
   UPDATE_CUSTOMER_FAILED,
   DELETED_PERSON,
-  DELETED_CUSTOMER
+  DELETED_CUSTOMER,
+  ADD_USER_LOGIN,
+  ADDED_USER_LOGIN,
+  ADD_USER_LOGIN_FAILED
 } from "../actions/account";
 function* addPartySaga(action) {
   yield put(
@@ -116,6 +119,27 @@ function* deletedCustomerSaga() {
   yield* fetchCustomerListSaga();
 }
 
+function* addUserLoginSaga(action) {
+  yield put(
+    apiPost(
+      "/api/account/add-user-login",
+      action.body,
+      ADDED_USER_LOGIN,
+      ADD_USER_LOGIN_FAILED
+    )
+  );
+}
+
+function* addedUserLoginSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Added successfully!!!"));
+}
+
+function* addUserLoginFailedSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushErrorNotification(sequence, "Added failed!!!"));
+}
+
 function* accountSaga() {
   yield takeEvery(ADD_PARTY, addPartySaga);
   yield takeEvery(ADDED_PARTY, addedPartySaga);
@@ -132,6 +156,10 @@ function* accountSaga() {
   yield takeEvery(UPDATED_CUSTOMER, updatedCustomerSaga);
 
   yield takeEvery(DELETED_CUSTOMER, deletedCustomerSaga);
+
+  yield takeEvery(ADD_USER_LOGIN, addUserLoginSaga);
+  yield takeEvery(ADDED_USER_LOGIN, addedUserLoginSaga);
+  yield takeEvery(ADD_USER_LOGIN_FAILED, addUserLoginFailedSaga);
 }
 
 export default accountSaga;

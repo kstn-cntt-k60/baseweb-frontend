@@ -30,6 +30,15 @@ export const UPDATE_CUSTOMER = "UPDATE_CUSTOMER";
 export const UPDATED_CUSTOMER = "UPDATED_CUSTOMER";
 export const UPDATE_CUSTOMER_FAILED = "UPDATE_CUSTOMER_FAILED";
 
+export const OPEN_ADD_USER_LOGIN_DIALOG = "OPEN_ADD_USER_LOGIN_DIALOG";
+export const CLOSE_ADD_USER_LOGIN_DIALOG = "CLOSE_ADD_USER_LOGIN_DIALOG";
+
+export const GOT_SEARCH_PERSON = "GOT_SEARCH_PERSON";
+export const RESET_SEARCH_PERSON = "RESET_SEARCH_PERSON";
+export const ADD_USER_LOGIN = "ADD_USER_LOGIN";
+export const ADDED_USER_LOGIN = "ADDED_USER_LOGIN";
+export const ADD_USER_LOGIN_FAILED = "ADD_USER_LOGIN_FAILED";
+
 export const openAddPartyDialog = () => ({
   type: OPEN_ADD_PARTY_DIALOG
 });
@@ -92,5 +101,22 @@ export const closeEditCustomerDialog = () => ({
 
 export const updateCustomerAction = body => ({
   type: UPDATE_CUSTOMER,
+  body
+});
+
+export const openAddUserLoginDialog = () => ({
+  type: OPEN_ADD_USER_LOGIN_DIALOG
+});
+
+export const closeAddUserLoginDialog = () => ({
+  type: CLOSE_ADD_USER_LOGIN_DIALOG
+});
+
+export const resetSearchPerson = () => ({
+  type: RESET_SEARCH_PERSON
+});
+
+export const addUserLogin = body => ({
+  type: ADD_USER_LOGIN,
   body
 });

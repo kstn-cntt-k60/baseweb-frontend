@@ -17,10 +17,18 @@ import {
   GOT_CUSTOMER_LIST,
   CUSTOMER_CONFIG_TABLE,
   OPEN_EDIT_CUSTOMER_DIALOG,
-  CLOSE_EDIT_CUSTOMER_DIALOG
+  CLOSE_EDIT_CUSTOMER_DIALOG,
+  OPEN_ADD_USER_LOGIN_DIALOG,
+  CLOSE_ADD_USER_LOGIN_DIALOG,
+  GOT_SEARCH_PERSON,
+  RESET_SEARCH_PERSON,
+  ADD_USER_LOGIN,
+  ADDED_USER_LOGIN,
+  ADD_USER_LOGIN_FAILED
 } from "../actions/account";
 
 import { arrayToObjectWithId } from "../util";
+import { LOGOUT } from "../actions";
 
 export const STATE_INIT = "INIT";
 export const STATE_LOADING = "LOADING";
@@ -38,6 +46,9 @@ const initialState = {
   editCustomerState: STATE_INIT,
   editCustomerId: null,
 
+  openAddUserLoginDialog: false,
+  addUserLoginState: STATE_INIT,
+
   personCount: 0,
   personMap: {},
   personIdList: [],
@@ -52,7 +63,9 @@ const initialState = {
   customerPage: 0,
   customerPageSize: 5,
   customerSortedBy: "createdAt",
-  customerSortOrder: "desc"
+  customerSortOrder: "desc",
+
+  searchPerson: []
 };
 
 const account = (state = initialState, action) => {
@@ -157,6 +170,51 @@ const account = (state = initialState, action) => {
         customerSortedBy: action.sortedBy,
         customerSortOrder: action.sortOrder
       };
+
+    case OPEN_ADD_USER_LOGIN_DIALOG:
+      return {
+        ...state,
+        openAddUserLoginDialog: true
+      };
+
+    case CLOSE_ADD_USER_LOGIN_DIALOG:
+      return {
+        ...state,
+        openAddUserLoginDialog: false
+      };
+
+    case GOT_SEARCH_PERSON:
+      return {
+        ...state,
+        searchPerson: action.body
+      };
+
+    case RESET_SEARCH_PERSON:
+      return {
+        ...state,
+        searchPerson: []
+      };
+
+    case ADD_USER_LOGIN:
+      return {
+        ...state,
+        addUserLoginState: STATE_LOADING
+      };
+
+    case ADDED_USER_LOGIN:
+      return {
+        ...state,
+        addUserLoginState: STATE_INIT
+      };
+
+    case ADD_USER_LOGIN_FAILED:
+      return {
+        ...state,
+        addUserLoginState: STATE_FAILED
+      };
+
+    case LOGOUT:
+      return initialState;
 
     default:
       return state;

@@ -107,7 +107,6 @@ const EditPersonDialog = ({
         <div className={classes.content}>
           <FormControl className={classes.textField}>
             <TextField
-              autoFocus
               margin="dense"
               label="Description"
               type="text"
@@ -131,7 +130,6 @@ const EditPersonDialog = ({
             </FormControl>
             <FormControl className={classes.nameField}>
               <TextField
-                autoFocus
                 margin="dense"
                 label="Middle Name"
                 type="text"
@@ -142,7 +140,6 @@ const EditPersonDialog = ({
             </FormControl>
             <FormControl className={classes.nameField}>
               <TextField
-                autoFocus
                 margin="dense"
                 label="Last Name"
                 type="text"

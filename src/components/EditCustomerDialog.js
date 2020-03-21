@@ -21,17 +21,9 @@ import {
 import { STATE_LOADING, STATE_FAILED } from "../reducers/account";
 
 const useStyles = makeStyles(theme => ({
-  select: {
-    margin: theme.spacing(1),
-    width: 200
-  },
   textField: {
     margin: theme.spacing(1),
     minWidth: 300
-  },
-  nameField: {
-    margin: theme.spacing(1),
-    width: 150
   },
   content: {
     display: "flex",
@@ -82,7 +74,6 @@ const EditPersonDialog = ({
         <div className={classes.content}>
           <FormControl className={classes.textField}>
             <TextField
-              autoFocus
               margin="dense"
               label="Description"
               type="text"
