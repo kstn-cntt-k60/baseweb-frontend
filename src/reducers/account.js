@@ -24,7 +24,10 @@ import {
   RESET_SEARCH_PERSON,
   ADD_USER_LOGIN,
   ADDED_USER_LOGIN,
-  ADD_USER_LOGIN_FAILED
+  ADD_USER_LOGIN_FAILED,
+  GOT_USER_LOGIN_LIST,
+  USER_LOGIN_CONFIG_TABLE,
+  USER_LOGIN_SEARCH_TEXT
 } from "../actions/account";
 
 import { arrayToObjectWithId } from "../util";
@@ -65,7 +68,16 @@ const initialState = {
   customerSortedBy: "createdAt",
   customerSortOrder: "desc",
 
-  searchPerson: []
+  searchPerson: [],
+
+  userLoginCount: 0,
+  userLoginMap: {},
+  userLoginIdList: [],
+  userLoginPage: 0,
+  userLoginPageSize: 5,
+  userLoginSortedBy: "createdAt",
+  userLoginSortOrder: "desc",
+  userLoginSearchText: ""
 };
 
 const account = (state = initialState, action) => {
@@ -211,6 +223,29 @@ const account = (state = initialState, action) => {
       return {
         ...state,
         addUserLoginState: STATE_FAILED
+      };
+
+    case GOT_USER_LOGIN_LIST:
+      return {
+        ...state,
+        userLoginCount: action.body.count,
+        userLoginMap: arrayToObjectWithId(action.body.userLoginList),
+        userLoginIdList: action.body.userLoginList.map(p => p.id)
+      };
+
+    case USER_LOGIN_CONFIG_TABLE:
+      return {
+        ...state,
+        userLoginPage: action.page,
+        userLoginPageSize: action.pageSize,
+        userLoginSortedBy: action.sortedBy,
+        userLoginSortOrder: action.sortOrder
+      };
+
+    case USER_LOGIN_SEARCH_TEXT:
+      return {
+        ...state,
+        userLoginSearchText: action.text
       };
 
     case LOGOUT:

@@ -3,14 +3,15 @@ import { connect } from "react-redux";
 
 import { Button } from "@material-ui/core";
 import { openAddUserLoginDialog } from "../../actions/account";
+import UserLoginTable from "./UserLoginTable";
 
 const UserLogin = ({ openDialog }) => {
   return (
     <div>
-      <h2>User Login</h2>
       <Button variant="contained" color="primary" onClick={openDialog}>
         Add User Login
       </Button>
+      <UserLoginTable />
     </div>
   );
 };

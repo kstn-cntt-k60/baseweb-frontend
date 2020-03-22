@@ -26,7 +26,9 @@ import {
   DELETED_CUSTOMER,
   ADD_USER_LOGIN,
   ADDED_USER_LOGIN,
-  ADD_USER_LOGIN_FAILED
+  ADD_USER_LOGIN_FAILED,
+  FETCH_USER_LOGIN_LIST,
+  GOT_USER_LOGIN_LIST
 } from "../actions/account";
 function* addPartySaga(action) {
   yield put(
@@ -133,11 +135,26 @@ function* addUserLoginSaga(action) {
 function* addedUserLoginSaga() {
   const sequence = yield select(state => state.notifications.sequence);
   yield put(pushSuccessNotification(sequence, "Added successfully!!!"));
+  yield* fetchUserLoginListSaga();
 }
 
 function* addUserLoginFailedSaga() {
   const sequence = yield select(state => state.notifications.sequence);
   yield put(pushErrorNotification(sequence, "Added failed!!!"));
+}
+
+function* fetchUserLoginListSaga() {
+  const page = yield select(state => state.account.userLoginPage);
+  const pageSize = yield select(state => state.account.userLoginPageSize);
+  const sortedBy = yield select(state => state.account.userLoginSortedBy);
+  const sortOrder = yield select(state => state.account.userLoginSortOrder);
+  const text = yield select(state => state.account.userLoginSearchText);
+  const searchText = encodeURIComponent(text);
+
+  const query = `page=${page}&pageSize=${pageSize}&sortedBy=${sortedBy}&sortOrder=${sortOrder}&query=${searchText}`;
+  yield put(
+    apiGet(`/api/account/view-user-login?${query}`, GOT_USER_LOGIN_LIST)
+  );
 }
 
 function* accountSaga() {
@@ -160,6 +177,8 @@ function* accountSaga() {
   yield takeEvery(ADD_USER_LOGIN, addUserLoginSaga);
   yield takeEvery(ADDED_USER_LOGIN, addedUserLoginSaga);
   yield takeEvery(ADD_USER_LOGIN_FAILED, addUserLoginFailedSaga);
+
+  yield takeEvery(FETCH_USER_LOGIN_LIST, fetchUserLoginListSaga);
 }
 
 export default accountSaga;

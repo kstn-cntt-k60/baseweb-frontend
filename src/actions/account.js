@@ -39,6 +39,11 @@ export const ADD_USER_LOGIN = "ADD_USER_LOGIN";
 export const ADDED_USER_LOGIN = "ADDED_USER_LOGIN";
 export const ADD_USER_LOGIN_FAILED = "ADD_USER_LOGIN_FAILED";
 
+export const FETCH_USER_LOGIN_LIST = "FETCH_USER_LOGIN_LIST";
+export const GOT_USER_LOGIN_LIST = "GOT_USER_LOGIN_LIST";
+export const USER_LOGIN_CONFIG_TABLE = "USER_LOGIN_CONFIG_TABLE";
+export const USER_LOGIN_SEARCH_TEXT = "USER_LOGIN_SEARCH_TEXT";
+
 export const openAddPartyDialog = () => ({
   type: OPEN_ADD_PARTY_DIALOG
 });
@@ -119,4 +124,21 @@ export const resetSearchPerson = () => ({
 export const addUserLogin = body => ({
   type: ADD_USER_LOGIN,
   body
+});
+
+export const fetchUserLoginList = () => ({
+  type: FETCH_USER_LOGIN_LIST
+});
+
+export const userLoginConfigTable = (page, pageSize, sortedBy, sortOrder) => ({
+  type: USER_LOGIN_CONFIG_TABLE,
+  page,
+  pageSize,
+  sortedBy,
+  sortOrder
+});
+
+export const userLoginSearchText = text => ({
+  type: USER_LOGIN_SEARCH_TEXT,
+  text
 });
