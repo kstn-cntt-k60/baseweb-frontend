@@ -27,7 +27,9 @@ import {
   ADD_USER_LOGIN_FAILED,
   GOT_USER_LOGIN_LIST,
   USER_LOGIN_CONFIG_TABLE,
-  USER_LOGIN_SEARCH_TEXT
+  USER_LOGIN_SEARCH_TEXT,
+  OPEN_EDIT_USER_LOGIN_DIALOG,
+  CLOSE_EDIT_USER_LOGIN_DIALOG
 } from "../actions/account";
 
 import { arrayToObjectWithId } from "../util";
@@ -51,6 +53,10 @@ const initialState = {
 
   openAddUserLoginDialog: false,
   addUserLoginState: STATE_INIT,
+
+  openEditUserLoginDialog: false,
+  editUserLoginState: STATE_INIT,
+  editUserLoginId: null,
 
   personCount: 0,
   personMap: {},
@@ -246,6 +252,20 @@ const account = (state = initialState, action) => {
       return {
         ...state,
         userLoginSearchText: action.text
+      };
+
+    case OPEN_EDIT_USER_LOGIN_DIALOG:
+      return {
+        ...state,
+        openEditUserLoginDialog: true,
+        editUserLoginId: action.id
+      };
+
+    case CLOSE_EDIT_USER_LOGIN_DIALOG:
+      return {
+        ...state,
+        openEditUserLoginDialog: false,
+        editUserLoginId: null
       };
 
     case LOGOUT:

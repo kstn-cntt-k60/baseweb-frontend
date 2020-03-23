@@ -15,6 +15,8 @@ import AddPartyDialog from "./components/AddPartyDialog";
 import EditPersonDialog from "./components/EditPersonDialog";
 import EditCustomerDialog from "./components/EditCustomerDialog";
 import AddUserLoginDialog from "./components/AddUserLoginDialog";
+import EditUserLoginDialog from "./components/EditUserLoginDialog";
+
 import YesNoDialog from "./components/YesNoDialog";
 
 const App = () => (
@@ -73,6 +75,7 @@ const App = () => (
     <AddSecurityGroupDialog />
     <EditPersonDialog />
     <EditCustomerDialog />
+    <EditUserLoginDialog />
     <AddUserLoginDialog />
     <YesNoDialog />
     <Notifications />

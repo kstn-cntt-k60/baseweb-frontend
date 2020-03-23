@@ -5,8 +5,8 @@ import { createSelector } from "reselect";
 import {
   userLoginConfigTable,
   fetchUserLoginList,
-  openEditCustomerDialog,
-  DELETED_CUSTOMER,
+  openEditUserLoginDialog,
+  DELETED_USER_LOGIN,
   userLoginSearchText
 } from "../../actions/account";
 import { apiPost, openYesNoDialog } from "../../actions";
@@ -250,12 +250,12 @@ const mapDispatch = dispatch => ({
   fetchUserLogin: () => dispatch(fetchUserLoginList()),
   configTable: (page, pageSize, sortedBy, sortOrder) =>
     dispatch(userLoginConfigTable(page, pageSize, sortedBy, sortOrder)),
-  openEdit: id => dispatch(openEditCustomerDialog(id)),
+  openEdit: id => dispatch(openEditUserLoginDialog(id)),
   openYesNoToDelete: id =>
     dispatch(
       openYesNoDialog(
-        "Do you want to delete this customer?",
-        apiPost("/api/account/delete-customer", { id }, DELETED_CUSTOMER)
+        "Do you want to delete this login account?",
+        apiPost("/api/account/delete-user-login", { id }, DELETED_USER_LOGIN)
       )
     ),
   setSearchText: text => dispatch(userLoginSearchText(text))

@@ -28,7 +28,11 @@ import {
   ADDED_USER_LOGIN,
   ADD_USER_LOGIN_FAILED,
   FETCH_USER_LOGIN_LIST,
-  GOT_USER_LOGIN_LIST
+  GOT_USER_LOGIN_LIST,
+  UPDATE_USER_LOGIN,
+  UPDATED_USER_LOGIN,
+  UPDATE_USER_LOGIN_FAILED,
+  DELETED_USER_LOGIN
 } from "../actions/account";
 function* addPartySaga(action) {
   yield put(
@@ -157,6 +161,35 @@ function* fetchUserLoginListSaga() {
   );
 }
 
+function* updateUserLoginSaga(action) {
+  yield put(
+    apiPost(
+      "/api/account/update-user-login",
+      action.body,
+      UPDATED_USER_LOGIN,
+      UPDATE_USER_LOGIN_FAILED
+    )
+  );
+}
+
+function* updatedUserLoginSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Saved successfully!!!"));
+  yield* fetchUserLoginListSaga();
+}
+
+function* updateUserLoginFailedSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushErrorNotification(sequence, "Saved failed!!!"));
+}
+
+function* deletedUserLoginSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Deleted successfully!!!"));
+  yield put(closeYesNoDialog());
+  yield* fetchUserLoginListSaga();
+}
+
 function* accountSaga() {
   yield takeEvery(ADD_PARTY, addPartySaga);
   yield takeEvery(ADDED_PARTY, addedPartySaga);
@@ -179,6 +212,10 @@ function* accountSaga() {
   yield takeEvery(ADD_USER_LOGIN_FAILED, addUserLoginFailedSaga);
 
   yield takeEvery(FETCH_USER_LOGIN_LIST, fetchUserLoginListSaga);
+  yield takeEvery(UPDATE_USER_LOGIN, updateUserLoginSaga);
+  yield takeEvery(UPDATED_USER_LOGIN, updatedUserLoginSaga);
+  yield takeEvery(UPDATE_USER_LOGIN_FAILED, updateUserLoginFailedSaga);
+  yield takeEvery(DELETED_USER_LOGIN, deletedUserLoginSaga);
 }
 
 export default accountSaga;

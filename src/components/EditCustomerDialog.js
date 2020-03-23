@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EditPersonDialog = ({
+const EditCustomerDialog = ({
   open,
   state,
   customer,
@@ -140,4 +140,4 @@ const mapDispatch = dispatch => ({
   updateCustomer: body => dispatch(updateCustomerAction(body))
 });
 
-export default connect(mapState, mapDispatch)(EditPersonDialog);
+export default connect(mapState, mapDispatch)(EditCustomerDialog);
