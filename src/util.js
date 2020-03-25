@@ -14,6 +14,25 @@ export const arrayToObjectWithId = array => {
 
 export const setDifference = (a, b) => new Set([...a].filter(e => !b.has(e)));
 
+export const setInsert = (s, e) => new Set([...s, e]);
+
+export const setDelete = (s, e) => {
+  const newSet = new Set(s);
+  newSet.delete(e);
+  return newSet;
+};
+
+export const setEquals = (a, b) =>
+  a.size === b.size && [...a].every(value => b.has(value));
+
+export const setSwitch = (s, e) => {
+  if (s.has(e)) {
+    return setDelete(s, e);
+  } else {
+    return setInsert(s, e);
+  }
+};
+
 const zeroPad = (num, size) => {
   const s = "000000000" + num;
   return s.substr(s.length - size);
