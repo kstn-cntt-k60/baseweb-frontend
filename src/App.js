@@ -9,6 +9,7 @@ import SecurityPermission from "./components/SecurityPermission";
 import Notifications from "./components/Notifications";
 import Party from "./components/Party";
 import UserLogin from "./components/UserLogin";
+import Product from "./components/Product";
 
 import AddSecurityGroupDialog from "./components/AddSecurityGroupDialog";
 import AddPartyDialog from "./components/AddPartyDialog";
@@ -60,6 +61,12 @@ const App = () => (
         <PrivateRoute path="/order/view-edit">
           <MainLayout>
             <h2>Orders</h2>
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/product/view-edit">
+          <MainLayout>
+            <Product />
           </MainLayout>
         </PrivateRoute>
 
