@@ -4,6 +4,7 @@ import security from "./security";
 import notifications from "./notifications";
 import account from "./account";
 import product from "./product";
+import facility from "./facility";
 import util from "./util";
 
 export default combineReducers({
@@ -12,5 +13,6 @@ export default combineReducers({
   notifications,
   account,
   product,
+  facility,
   util
 });

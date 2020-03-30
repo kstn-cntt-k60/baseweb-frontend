@@ -99,7 +99,7 @@ const EditDialog = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add Product</DialogTitle>
+      <DialogTitle>Edit Product</DialogTitle>
       <DialogContent>
         <div className={classes.content}>
           <FormControl className={classes.textField}>

@@ -17,6 +17,7 @@ import { apiLogin } from "./api";
 import securitySaga from "./security";
 import accountSaga from "./account";
 import productSaga from "./product";
+import facilitySaga from "./facility";
 
 function* loginSaga(action) {
   const response = yield call(apiLogin, action.username, action.password);
@@ -102,6 +103,7 @@ function* rootSaga() {
   yield* securitySaga();
   yield* accountSaga();
   yield* productSaga();
+  yield* facilitySaga();
 }
 
 export default rootSaga;
