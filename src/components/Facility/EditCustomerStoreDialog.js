@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 
 import { apiPost } from "../../actions";
-import { UPDATED_WAREHOUSE } from "../../actions/facility";
+import { UPDATED_CUSTOMER_STORE } from "../../actions/facility";
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -27,53 +27,53 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EditWarehouseDialog = ({
+const EditCustomerStoreDialog = ({
   open,
-  warehouseId,
-  getWarehouse,
+  storeId,
+  getStore,
   onClose,
-  updateWarehouse
+  updateStore
 }) => {
   const classes = useStyles();
 
-  const warehouse = getWarehouse(warehouseId);
+  const store = getStore(storeId);
 
-  const [name, setName] = useState(warehouse.name);
-  const [addr, setAddr] = useState(warehouse.address);
+  const [name, setName] = useState(store.name);
+  const [addr, setAddr] = useState(store.address);
 
   const resetValues = () => {
-    setName(warehouse.name);
-    setAddr(warehouse.address);
+    setName(store.name);
+    setAddr(store.address);
   };
 
   useEffect(() => {
     resetValues();
-  }, [warehouseId]);
+  }, [storeId]);
 
   const onCancel = () => {
     resetValues();
   };
 
   const onSave = () => {
-    updateWarehouse({
-      id: warehouseId,
+    updateStore({
+      id: storeId,
       name,
       address: addr
     });
   };
 
-  const disabled = name === warehouse.name && addr === warehouse.address;
+  const disabled = name === store.name && addr === store.address;
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Warehouse </DialogTitle>
+      <DialogTitle>Edit Customer Store </DialogTitle>
       <DialogContent>
         <div className={classes.content}>
           <FormControl className={classes.textField}>
             <TextField
               autoFocus
               margin="dense"
-              label="Warehouse Name"
+              label="Store Name"
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
@@ -114,22 +114,28 @@ const EditWarehouseDialog = ({
   );
 };
 
-const emptyWarehouse = {
+const emptyStore = {
   id: null,
   name: "",
   address: ""
 };
 
 const mapState = createSelector(
-  state => state.facility.warehouseMap,
-  warehouseMap => ({
-    getWarehouse: id => warehouseMap[id] || emptyWarehouse
+  state => state.facility.storeMap,
+  storeMap => ({
+    getStore: id => storeMap[id] || emptyStore
   })
 );
 
 const mapDispatch = dispatch => ({
-  updateWarehouse: body =>
-    dispatch(apiPost("/api/facility/update-warehouse", body, UPDATED_WAREHOUSE))
+  updateStore: body =>
+    dispatch(
+      apiPost(
+        "/api/facility/update-customer-store",
+        body,
+        UPDATED_CUSTOMER_STORE
+      )
+    )
 });
 
-export default connect(mapState, mapDispatch)(EditWarehouseDialog);
+export default connect(mapState, mapDispatch)(EditCustomerStoreDialog);

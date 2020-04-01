@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const AddDialog = ({ open, onClose, saveWarehouse }) => {
+const AddWarehouseDialog = ({ open, onClose, saveWarehouse }) => {
   const classes = useStyles();
 
   const [name, setName] = useState("");
@@ -101,7 +101,7 @@ const mapState = () => ({});
 
 const mapDispatch = dispatch => ({
   saveWarehouse: body =>
-    dispatch(apiPost("/api/facility/save-warehouse", body, ADDED_WAREHOUSE))
+    dispatch(apiPost("/api/facility/add-warehouse", body, ADDED_WAREHOUSE))
 });
 
-export default connect(mapState, mapDispatch)(AddDialog);
+export default connect(mapState, mapDispatch)(AddWarehouseDialog);

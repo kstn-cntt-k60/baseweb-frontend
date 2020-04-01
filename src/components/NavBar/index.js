@@ -148,6 +148,11 @@ const NavBar = ({ open, handleNavBarClose }) => {
               text: "Warehouse",
               url: "warehouse",
               permission: "VIEW_EDIT_FACILITY"
+            },
+            {
+              text: "Customer Store",
+              url: "customer-store",
+              permission: "VIEW_EDIT_FACILITY"
             }
           ]}
         />

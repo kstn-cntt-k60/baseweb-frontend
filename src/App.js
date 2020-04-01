@@ -11,6 +11,7 @@ import Party from "./components/Party";
 import UserLogin from "./components/UserLogin";
 import Product from "./components/Product";
 import Warehouse from "./components/Facility/Warehouse";
+import CustomerStore from "./components/Facility/CustomerStore";
 
 import AddSecurityGroupDialog from "./components/AddSecurityGroupDialog";
 import AddPartyDialog from "./components/AddPartyDialog";
@@ -74,6 +75,12 @@ const App = () => (
         <PrivateRoute path="/facility/warehouse">
           <MainLayout>
             <Warehouse />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/facility/customer-store">
+          <MainLayout>
+            <CustomerStore />
           </MainLayout>
         </PrivateRoute>
 

@@ -2,7 +2,10 @@ import { arrayToObjectWithId } from "../util";
 
 import {
   GOT_WAREHOUSE_LIST,
-  CONFIG_WAREHOUSE_TABLE
+  CONFIG_WAREHOUSE_TABLE,
+  GOT_CUSTOMER_STORE_LIST,
+  CONFIG_CUSTOMER_STORE_TABLE,
+  GOT_SEARCH_CUSTOMER
 } from "../actions/facility";
 
 const initialState = {
@@ -13,7 +16,18 @@ const initialState = {
   warehousePageSize: 5,
   warehouseSortedBy: "createdAt",
   warehouseSortOrder: "desc",
-  warehouseSearchText: ""
+  warehouseSearchText: "",
+
+  storeMap: {},
+  storeIdList: [],
+  storeCount: 0,
+  storePage: 0,
+  storePageSize: 5,
+  storeSortedBy: "createdAt",
+  storeSortOrder: "desc",
+  storeSearchText: "",
+
+  customerList: []
 };
 
 const facility = (state = initialState, action) => {
@@ -34,6 +48,30 @@ const facility = (state = initialState, action) => {
         warehouseSortedBy: action.sortedBy,
         warehouseSortOrder: action.sortOrder,
         warehouseSearchText: action.searchText
+      };
+
+    case GOT_CUSTOMER_STORE_LIST:
+      return {
+        ...state,
+        storeCount: action.body.storeCount,
+        storeMap: arrayToObjectWithId(action.body.storeList),
+        storeIdList: action.body.storeList.map(w => w.id)
+      };
+
+    case CONFIG_CUSTOMER_STORE_TABLE:
+      return {
+        ...state,
+        storePage: action.page,
+        storePageSize: action.pageSize,
+        storeSortedBy: action.sortedBy,
+        storeSortOrder: action.sortOrder,
+        storeSearchText: action.searchText
+      };
+
+    case GOT_SEARCH_CUSTOMER:
+      return {
+        ...state,
+        customerList: action.body
       };
 
     default:

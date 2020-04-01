@@ -167,7 +167,7 @@ const mapState = () => ({});
 
 const mapDispatch = dispatch => ({
   saveProduct: body =>
-    dispatch(apiPost("/api/product/save-product", body, ADDED_PRODUCT))
+    dispatch(apiPost("/api/product/add-product", body, ADDED_PRODUCT))
 });
 
 export default connect(mapState, mapDispatch)(AddDialog);
