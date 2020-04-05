@@ -10,6 +10,7 @@ import Notifications from "./components/Notifications";
 import Party from "./components/Party";
 import UserLogin from "./components/UserLogin";
 import Product from "./components/Product";
+import ProductPricing from "./components/Product/ProductPricing";
 import Warehouse from "./components/Facility/Warehouse";
 import CustomerStore from "./components/Facility/CustomerStore";
 
@@ -69,6 +70,12 @@ const App = () => (
         <PrivateRoute path="/product/view-edit">
           <MainLayout>
             <Product />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/product/pricing">
+          <MainLayout>
+            <ProductPricing />
           </MainLayout>
         </PrivateRoute>
 

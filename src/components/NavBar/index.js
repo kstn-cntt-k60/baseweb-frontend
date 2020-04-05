@@ -134,6 +134,11 @@ const NavBar = ({ open, handleNavBarClose }) => {
               text: "View & Edit",
               url: "view-edit",
               permission: "VIEW_EDIT_PRODUCT"
+            },
+            {
+              text: "Pricing",
+              url: "pricing",
+              permission: "VIEW_EDIT_PRODUCT"
             }
           ]}
         />
