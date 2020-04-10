@@ -10,15 +10,11 @@ import {
   TextField,
   FormControl,
   Button,
-  CircularProgress,
   makeStyles
 } from "@material-ui/core";
 
-import {
-  closeEditCustomerDialog,
-  updateCustomerAction
-} from "../actions/account";
-import { STATE_LOADING, STATE_FAILED } from "../reducers/account";
+import { apiPost } from "../../actions";
+import { UPDATED_CUSTOMER } from "../../actions/account";
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -33,12 +29,14 @@ const useStyles = makeStyles(theme => ({
 
 const EditCustomerDialog = ({
   open,
-  state,
-  customer,
-  closeDialog,
+  customerId,
+  getCustomer,
+  onClose,
   updateCustomer
 }) => {
   const classes = useStyles();
+
+  const customer = getCustomer(customerId);
 
   const [description, setDescription] = useState(customer.description);
   const [name, setName] = useState(customer.name);
@@ -68,7 +66,7 @@ const EditCustomerDialog = ({
     description === customer.description && name === customer.name;
 
   return (
-    <Dialog open={open} onClose={closeDialog}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit Customer</DialogTitle>
       <DialogContent>
         <div className={classes.content}>
@@ -97,8 +95,6 @@ const EditCustomerDialog = ({
         </div>
       </DialogContent>
       <DialogActions>
-        {state === STATE_LOADING ? <CircularProgress /> : ""}
-        {state === STATE_FAILED ? "Save failed" : ""}
         <Button
           disabled={disabled}
           onClick={onCancel}
@@ -121,23 +117,19 @@ const EditCustomerDialog = ({
 };
 
 const mapState = createSelector(
-  state => state.account.openEditCustomerDialog,
-  state => state.account.editCustomerState,
   state => state.account.customerMap,
-  state => state.account.editCustomerId,
-  (open, state, customerMap, id) => ({
-    open,
-    state,
-    customer: customerMap[id] || {
-      description: "",
-      name: ""
-    }
+  customerMap => ({
+    getCustomer: id =>
+      customerMap[id] || {
+        description: "",
+        name: ""
+      }
   })
 );
 
 const mapDispatch = dispatch => ({
-  closeDialog: () => dispatch(closeEditCustomerDialog()),
-  updateCustomer: body => dispatch(updateCustomerAction(body))
+  updateCustomer: body =>
+    dispatch(apiPost("/api/account/update-customer", body, UPDATED_CUSTOMER))
 });
 
 export default connect(mapState, mapDispatch)(EditCustomerDialog);

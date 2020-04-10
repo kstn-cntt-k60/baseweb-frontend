@@ -13,15 +13,9 @@ import Product from "./components/Product";
 import ProductPricing from "./components/Product/ProductPricing";
 import Warehouse from "./components/Facility/Warehouse";
 import CustomerStore from "./components/Facility/CustomerStore";
-
-import AddSecurityGroupDialog from "./components/AddSecurityGroupDialog";
-import AddPartyDialog from "./components/AddPartyDialog";
-import EditPersonDialog from "./components/EditPersonDialog";
-import EditCustomerDialog from "./components/EditCustomerDialog";
-import AddUserLoginDialog from "./components/AddUserLoginDialog";
-import EditUserLoginDialog from "./components/EditUserLoginDialog";
-
-import YesNoDialog from "./components/YesNoDialog";
+import Import from "./components/Import";
+import ImportWarehouse from "./components/Import/ImportWarehouse";
+import ImportWarehouseProduct from "./components/Import/ImportWarehouseProduct";
 
 const App = () => (
   <React.Fragment>
@@ -91,6 +85,27 @@ const App = () => (
           </MainLayout>
         </PrivateRoute>
 
+        <PrivateRoute path="/import-export/import">
+          <MainLayout>
+            <Import />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute noPreviousUrl path="/import-export/import-warehouse/:id">
+          <MainLayout>
+            <ImportWarehouse />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute
+          noPreviousUrl
+          path="/import-export/import-warehouse-product/:warehouseId/:productId"
+        >
+          <MainLayout>
+            <ImportWarehouseProduct />
+          </MainLayout>
+        </PrivateRoute>
+
         <Route path="/error">
           <h1>ERROR</h1>
         </Route>
@@ -99,13 +114,6 @@ const App = () => (
       </Switch>
     </BrowserRouter>
 
-    <AddPartyDialog />
-    <AddSecurityGroupDialog />
-    <EditPersonDialog />
-    <EditCustomerDialog />
-    <EditUserLoginDialog />
-    <AddUserLoginDialog />
-    <YesNoDialog />
     <Notifications />
   </React.Fragment>
 );

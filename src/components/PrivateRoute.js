@@ -4,9 +4,11 @@ import { STATE_LOGGED_IN } from "../reducers/auth";
 import { Redirect, Route } from "react-router-dom";
 import { loginPreviousUrl } from "../actions";
 
-const CustomRoute = ({ state, path, children, changeUrl }) => {
+const CustomRoute = ({ state, noPreviousUrl, path, children, changeUrl }) => {
   useEffect(() => {
-    changeUrl(path);
+    if (!noPreviousUrl) {
+      changeUrl(path);
+    }
   }, [path]);
 
   return (
@@ -16,9 +18,14 @@ const CustomRoute = ({ state, path, children, changeUrl }) => {
   );
 };
 
-const PrivateRoute = ({ state, path, children, changeUrl }) => (
+const PrivateRoute = ({ state, noPreviousUrl, path, children, changeUrl }) => (
   <Route path={path}>
-    <CustomRoute state={state} path={path} changeUrl={changeUrl}>
+    <CustomRoute
+      state={state}
+      path={path}
+      changeUrl={changeUrl}
+      noPreviousUrl={noPreviousUrl}
+    >
       {children}
     </CustomRoute>
   </Route>

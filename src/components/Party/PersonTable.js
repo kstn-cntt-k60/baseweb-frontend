@@ -2,13 +2,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import {
-  personConfigTable,
-  fetchPersonList,
-  openEditPersonDialog,
-  DELETED_PERSON
-} from "../../actions/account";
-import { apiPost, openYesNoDialog } from "../../actions";
+import { personConfigTable, fetchPersonList } from "../../actions/account";
 
 import {
   Paper,
@@ -47,8 +41,8 @@ const PersonTable = ({
   sortOrder,
   fetchPersonList,
   configTable,
-  openEditDialog,
-  openYesNoToDelete
+  onEdit,
+  onDelete
 }) => {
   const classes = useStyles();
 
@@ -70,14 +64,6 @@ const PersonTable = ({
     } else {
       configTable(page, pageSize, name, sortOrder);
     }
-  };
-
-  const onEdit = id => {
-    openEditDialog(id);
-  };
-
-  const onDelete = id => {
-    openYesNoToDelete(id);
   };
 
   return (
@@ -208,15 +194,7 @@ const mapState = createSelector(
 const mapDispatch = dispatch => ({
   fetchPersonList: () => dispatch(fetchPersonList()),
   configTable: (page, pageSize, sortedBy, sortOrder) =>
-    dispatch(personConfigTable(page, pageSize, sortedBy, sortOrder)),
-  openEditDialog: id => dispatch(openEditPersonDialog(id)),
-  openYesNoToDelete: id =>
-    dispatch(
-      openYesNoDialog(
-        "Do you want to delete this person?",
-        apiPost("/api/account/delete-person", { id }, DELETED_PERSON)
-      )
-    )
+    dispatch(personConfigTable(page, pageSize, sortedBy, sortOrder))
 });
 
 export default connect(mapState, mapDispatch)(PersonTable);

@@ -2,7 +2,10 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import { customerConfigTable, fetchCustomerList } from "../../actions/account";
+import {
+  configInventoryItemTable,
+  fetchInventoryItemListByWarehouse
+} from "../../actions/import";
 
 import {
   Paper,
@@ -16,71 +19,74 @@ import {
   TablePagination,
   makeStyles
 } from "@material-ui/core";
-import { formatTime } from "../../util";
 
 import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
 
-const useStyles = makeStyles(() => ({
+import ProductInfoLink from "../Product/ProductInfoLink";
+
+import { formatTime } from "../../util";
+
+const useStyles = makeStyles(theme => ({
   tableHead: {
     fontWeight: "bold"
   },
   iconButton: {
     cursor: "pointer"
+  },
+  paper: {
+    marginTop: theme.spacing(1)
+  },
+  title: {
+    margin: theme.spacing(1)
   }
 }));
 
 const switchSortOrder = order => (order === "desc" ? "asc" : "desc");
 
-const CustomerTable = ({
+const InventoryItemTable = ({
+  warehouseId,
   entries,
-  count,
-  page,
-  pageSize,
-  sortedBy,
-  sortOrder,
-  fetchCustomer,
+  inventoryCount,
+  config,
+  fetchItems,
   configTable,
-  onEdit,
-  onDelete
+  onEdit
 }) => {
   const classes = useStyles();
 
   useEffect(() => {
-    fetchCustomer();
-  }, [page, pageSize, sortedBy, sortOrder]);
+    fetchItems(warehouseId);
+  }, [config]);
+
+  const sortedBy = config.sortedBy;
+  const sortOrder = config.sortOrder;
 
   const onPageChange = (_, newPage) => {
-    configTable(newPage, pageSize, sortedBy, sortOrder);
+    configTable({ page: newPage });
   };
 
   const onPageSizeChange = e => {
-    configTable(page, e.target.value, sortedBy, sortOrder);
+    configTable({ pageSize: e.target.value });
   };
 
   const onSortChange = name => {
     if (name === sortedBy) {
-      configTable(page, pageSize, sortedBy, switchSortOrder(sortOrder));
+      configTable({ sortOrder: switchSortOrder(sortOrder) });
     } else {
-      configTable(page, pageSize, name, sortOrder);
+      configTable({ sortedBy: name });
     }
   };
 
   return (
-    <Paper>
+    <Paper className={classes.paper}>
+      <h2 className={classes.title}>Import History</h2>
       <TableContainer>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={sortedBy === "name"}
-                  onClick={() => onSortChange("name")}
-                  direction={sortOrder}
-                >
-                  Customer Name
-                </TableSortLabel>
-              </TableCell>
+              <TableCell className={classes.tableHead}>Product Name</TableCell>
+              <TableCell className={classes.tableHead}>Quantity</TableCell>
+              <TableCell className={classes.tableHead}>Cost</TableCell>
               <TableCell className={classes.tableHead}>
                 <TableSortLabel
                   active={sortedBy === "createdAt"}
@@ -99,28 +105,23 @@ const CustomerTable = ({
                   Updated At
                 </TableSortLabel>
               </TableCell>
-              <TableCell className={classes.tableHead}>Description</TableCell>
-              <TableCell className={classes.tableHead}></TableCell>
               <TableCell className={classes.tableHead}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {entries.map(e => (
               <TableRow key={e.id}>
-                <TableCell>{e.name}</TableCell>
+                <TableCell>
+                  <ProductInfoLink id={e.productId} name={e.productName} />
+                </TableCell>
+                <TableCell>{e.quantity}</TableCell>
+                <TableCell>{e.unitCost}</TableCell>
                 <TableCell>{e.createdAt}</TableCell>
                 <TableCell>{e.updatedAt}</TableCell>
-                <TableCell>{e.description}</TableCell>
                 <TableCell>
                   <EditIcon
                     className={classes.iconButton}
                     onClick={() => onEdit(e.id)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <DeleteIcon
-                    className={classes.iconButton}
-                    onClick={() => onDelete(e.id)}
                   />
                 </TableCell>
               </TableRow>
@@ -131,9 +132,9 @@ const CustomerTable = ({
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={count}
-        rowsPerPage={pageSize}
-        page={page}
+        count={inventoryCount}
+        rowsPerPage={config.pageSize}
+        page={config.page}
         onChangePage={onPageChange}
         onChangeRowsPerPage={onPageSizeChange}
       />
@@ -142,41 +143,27 @@ const CustomerTable = ({
 };
 
 const mapState = createSelector(
-  state => state.account.customerMap,
-  state => state.account.customerIdList,
-  state => state.account.customerCount,
-  state => state.account.customerPage,
-  state => state.account.customerPageSize,
-  state => state.account.customerSortedBy,
-  state => state.account.customerSortOrder,
-  (
-    customerMap,
-    customerIdList,
-    count,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder
-  ) => ({
-    entries: customerIdList
-      .map(id => customerMap[id])
-      .map(c => ({
-        ...c,
-        createdAt: formatTime(c.createdAt),
-        updatedAt: formatTime(c.updatedAt)
+  state => state.import.inventoryMap,
+  state => state.import.inventoryIdList,
+  state => state.import.inventoryCount,
+  state => state.import.inventoryTable,
+  (inventoryMap, inventoryIdList, inventoryCount, config) => ({
+    config,
+    entries: inventoryIdList
+      .map(id => inventoryMap[id])
+      .map(item => ({
+        ...item,
+        unitCost: `${item.unitCost}${item.currencyUomId}`,
+        createdAt: formatTime(item.createdAt),
+        updatedAt: formatTime(item.updatedAt)
       })),
-    count,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder
+    inventoryCount
   })
 );
 
 const mapDispatch = dispatch => ({
-  fetchCustomer: () => dispatch(fetchCustomerList()),
-  configTable: (page, pageSize, sortedBy, sortOrder) =>
-    dispatch(customerConfigTable(page, pageSize, sortedBy, sortOrder))
+  fetchItems: id => dispatch(fetchInventoryItemListByWarehouse(id)),
+  configTable: config => dispatch(configInventoryItemTable(config))
 });
 
-export default connect(mapState, mapDispatch)(CustomerTable);
+export default connect(mapState, mapDispatch)(InventoryItemTable);

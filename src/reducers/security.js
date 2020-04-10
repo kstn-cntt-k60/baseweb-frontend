@@ -1,10 +1,6 @@
 import {
   GOT_ALL_GROUPS_AND_PERMISSIONS,
   SAVED_GROUP_PERMISSIONS,
-  OPEN_ADD_SECURITY_GROUP_DIALOG,
-  CLOSE_ADD_SECURITY_GROUP_DIALOG,
-  ADD_SECURITY_GROUP,
-  ADD_SECURITY_GROUP_FAILED,
   ADDED_SECURITY_GROUP,
   USER_LOGIN_CONFIG_TABLE,
   GOT_USER_LOGIN_LIST,
@@ -16,20 +12,10 @@ import {
 import { LOGOUT } from "../actions";
 import { arrayToObjectWithId } from "../util";
 
-export const GROUP_INITIAL = 1;
-export const GROUP_LOADING = 2;
-export const GROUP_FAILED = 3;
-
-export const STATE_INIT = "INIT";
-export const STATE_LOADING = "LOADING";
-export const STATE_FAILED = "FAILED";
-
 const initialState = {
   securityPermissions: {},
   securityGroups: {},
   securityGroupPermissions: {},
-  openAddSecurityGroupDialog: false,
-  addSecurityGroupState: GROUP_INITIAL,
 
   userLoginMap: {},
   userLoginIdList: [],
@@ -68,31 +54,14 @@ const security = (state = initialState, action) => {
     case LOGOUT:
       return initialState;
 
-    case OPEN_ADD_SECURITY_GROUP_DIALOG:
-      return { ...state, openAddSecurityGroupDialog: true };
-
-    case CLOSE_ADD_SECURITY_GROUP_DIALOG:
-      return {
-        ...state,
-        openAddSecurityGroupDialog: false,
-        addSecurityGroupState: GROUP_INITIAL
-      };
-
-    case ADD_SECURITY_GROUP:
-      return { ...state, addSecurityGroupState: GROUP_LOADING };
-
     case ADDED_SECURITY_GROUP:
       return {
         ...state,
-        addSecurityGroupState: GROUP_INITIAL,
         securityGroups: {
           ...state.securityGroups,
           [action.body.securityGroup.id]: action.body.securityGroup
         }
       };
-
-    case ADD_SECURITY_GROUP_FAILED:
-      return { ...state, addSecurityGroupState: GROUP_FAILED };
 
     case USER_LOGIN_CONFIG_TABLE:
       return {

@@ -10,9 +10,6 @@ export const API_REQUEST = "API_REQUEST";
 export const PUSH_NOTIFICATION = "PUSH_NOTIFICATION";
 export const REMOVE_NOTIFICATION = "REMOVE_NOTIFICATION";
 
-export const OPEN_YES_NO_DIALOG = "OPEN_YES_NO_DIALOG";
-export const CLOSE_YES_NO_DIALOG = "CLOSE_YES_NO_DIALOG";
-
 export const loginAction = (username, password) => ({
   type: LOGIN,
   username,
@@ -79,12 +76,13 @@ export const removeNotification = id => ({
   id
 });
 
-export const openYesNoDialog = (title, action) => ({
-  type: OPEN_YES_NO_DIALOG,
-  title,
-  action
-});
-
-export const closeYesNoDialog = () => ({
-  type: CLOSE_YES_NO_DIALOG
-});
+export const urlWithParams = (url, params) => {
+  const query = Object.entries(params)
+    .map(([key, value]) => {
+      key = encodeURIComponent(key);
+      value = encodeURIComponent(value);
+      return `${key}=${value}`;
+    })
+    .join("&");
+  return `${url}?${query}`;
+};

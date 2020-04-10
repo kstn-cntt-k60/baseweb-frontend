@@ -1,25 +1,53 @@
-import React from "react";
-import { connect } from "react-redux";
+import React, { useState } from "react";
 
 import { Button } from "@material-ui/core";
-import { openAddUserLoginDialog } from "../../actions/account";
 import UserLoginTable from "./UserLoginTable";
+import AddDialog from "./AddDialog";
+import EditDialog from "./EditDialog";
+import DeleteDialog from "./DeleteDialog";
 
-const UserLogin = ({ openDialog }) => {
+const UserLogin = () => {
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  const onEdit = id => {
+    setEditId(id);
+    setOpenEdit(true);
+  };
+
+  const onDelete = id => {
+    setDeleteId(id);
+    setOpenDelete(true);
+  };
+
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={openDialog}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setOpenAdd(true)}
+      >
         Add User Login
       </Button>
-      <UserLoginTable />
+
+      <UserLoginTable onEdit={onEdit} onDelete={onDelete} />
+
+      <AddDialog open={openAdd} onClose={() => setOpenAdd(false)} />
+      <EditDialog
+        open={openEdit}
+        userLoginId={editId}
+        onClose={() => setOpenEdit(false)}
+      />
+      <DeleteDialog
+        open={openDelete}
+        userLoginId={deleteId}
+        onClose={() => setOpenDelete(false)}
+      />
     </div>
   );
 };
 
-const mapState = () => ({});
-
-const mapDispatch = dispatch => ({
-  openDialog: () => dispatch(openAddUserLoginDialog())
-});
-
-export default connect(mapState, mapDispatch)(UserLogin);
+export default UserLogin;

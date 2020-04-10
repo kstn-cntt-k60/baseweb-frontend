@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
@@ -13,19 +13,18 @@ import {
   TextField,
   FormControl,
   Button,
-  CircularProgress,
   makeStyles
 } from "@material-ui/core";
 
+import { apiPost } from "../../actions";
 import {
-  closeAddUserLoginDialog,
   resetSearchPerson,
-  addUserLogin,
+  ADDED_USER_LOGIN,
   GOT_SEARCH_PERSON
-} from "../actions/account";
-import { STATE_INIT, STATE_LOADING, STATE_FAILED } from "../reducers/account";
-import { apiGet } from "../actions";
-import { formatDate, getGender } from "../util";
+} from "../../actions/account";
+
+import { apiGet } from "../../actions";
+import { formatDate, getGender } from "../../util";
 import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles(theme => ({
@@ -45,8 +44,9 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "row",
     alignItems: "center",
     border: "solid",
-    borderWidth: focus ? "2px" : "1px",
+    borderWidth: "1px",
     borderColor: focus ? "blue" : "#aaa",
+    boxShadow: focus ? "0 0 10px 0px blue" : "none",
     marginTop: "16px",
     borderRadius: "15px",
     padding: "0px 10px"
@@ -93,11 +93,10 @@ const SearchItem = ({ person, classes, onSelectPerson }) => (
   </ListItem>
 );
 
-const AddUserLoginDialog = ({
+const AddDialog = ({
   open,
-  state,
   personList,
-  closeDialog,
+  onClose,
   searchPerson,
   onResetSearch,
   onAdd
@@ -124,12 +123,6 @@ const AddUserLoginDialog = ({
     }
   };
 
-  useEffect(() => {
-    if (state === STATE_INIT) {
-      resetValues();
-    }
-  }, [state]);
-
   const onCancel = () => {
     resetValues();
   };
@@ -140,6 +133,7 @@ const AddUserLoginDialog = ({
       password,
       personId: chosenPerson.id
     });
+    onClose();
   };
 
   const onSearch = e => {
@@ -153,14 +147,20 @@ const AddUserLoginDialog = ({
     onResetSearch();
   };
 
-  const disabled =
+  const cancelDisabled =
+    username === "" &&
+    password === "" &&
+    passwordConfirm === "" &&
+    chosenPerson === null;
+
+  const saveDisabled =
     username === "" ||
     password === "" ||
     password !== passwordConfirm ||
     chosenPerson === null;
 
   return (
-    <Dialog open={open} onClose={closeDialog}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Add User Login</DialogTitle>
       <DialogContent>
         <div className={classes.content}>
@@ -241,14 +241,8 @@ const AddUserLoginDialog = ({
         </div>
       </DialogContent>
       <DialogActions>
-        {state === STATE_LOADING ? <CircularProgress /> : ""}
-        {state === STATE_FAILED ? (
-          <h4 className={classes.failed}>Add failed</h4>
-        ) : (
-          ""
-        )}
         <Button
-          disabled={disabled}
+          disabled={cancelDisabled}
           onClick={onCancel}
           variant="contained"
           color="secondary"
@@ -256,7 +250,7 @@ const AddUserLoginDialog = ({
           Cancel
         </Button>
         <Button
-          disabled={disabled}
+          disabled={saveDisabled}
           onClick={onSave}
           variant="contained"
           color="primary"
@@ -269,18 +263,13 @@ const AddUserLoginDialog = ({
 };
 
 const mapState = createSelector(
-  state => state.account.openAddUserLoginDialog,
-  state => state.account.addUserLoginState,
   state => state.account.searchPerson,
-  (open, state, personList) => ({
-    open,
-    state,
+  personList => ({
     personList
   })
 );
 
 const mapDispatch = dispatch => ({
-  closeDialog: () => dispatch(closeAddUserLoginDialog()),
   searchPerson: query =>
     dispatch(
       apiGet(
@@ -289,7 +278,8 @@ const mapDispatch = dispatch => ({
       )
     ),
   onResetSearch: () => dispatch(resetSearchPerson()),
-  onAdd: body => dispatch(addUserLogin(body))
+  onAdd: body =>
+    dispatch(apiPost("/api/account/add-user-login", body, ADDED_USER_LOGIN))
 });
 
-export default connect(mapState, mapDispatch)(AddUserLoginDialog);
+export default connect(mapState, mapDispatch)(AddDialog);

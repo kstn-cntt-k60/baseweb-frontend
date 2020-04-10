@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 
 import {
@@ -12,7 +12,6 @@ import {
   Select,
   MenuItem,
   Button,
-  CircularProgress,
   makeStyles
 } from "@material-ui/core";
 
@@ -23,8 +22,9 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
-import { closeAddPartyDialog, addParty } from "../actions/account";
-import { STATE_LOADING, STATE_FAILED, STATE_INIT } from "../reducers/account";
+import { apiPost } from "../../actions";
+import { ADDED_PARTY } from "../../actions/account";
+import { dateEquals } from "../../util";
 
 const useStyles = makeStyles(theme => ({
   select: {
@@ -136,7 +136,7 @@ const CustomerForm = ({ classes, customerName, setCustomerName }) => (
   </React.Fragment>
 );
 
-const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
+const AddDialog = ({ open, onClose, onAddParty }) => {
   const classes = useStyles();
 
   const [partyType, setPartyType] = useState(1);
@@ -147,18 +147,6 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
   const [gender, setGender] = useState(1);
   const [birthDate, setBirthDate] = useState("2000-01-01T00:00:00.000Z");
   const [customerName, setCustomerName] = useState("");
-
-  useEffect(() => {
-    if (state === STATE_INIT) {
-      setDescription("");
-      setFirstName("");
-      setMiddleName("");
-      setLastName("");
-      setGender(1);
-      setBirthDate("2000-01-01T00:00:00.000Z");
-      setCustomerName("");
-    }
-  }, [state]);
 
   const onAdd = () => {
     if (partyType === 1) {
@@ -178,21 +166,52 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
         customerName
       });
     }
+
+    onClose();
   };
 
-  const enableAdd = () => {
-    if (state === STATE_LOADING) return false;
+  const onCancel = () => {
+    setDescription("");
 
     if (partyType === 1) {
-      return firstName !== "" && lastName !== "";
-    } else if (partyType === 2) {
-      return customerName !== "";
+      setFirstName("");
+      setMiddleName("");
+      setLastName("");
+      setGender(1);
+      setBirthDate("2000-01-01T00:00:00.000Z");
+    } else {
+      setCustomerName("");
     }
-    return false;
+  };
+
+  const disableCancel = () => {
+    if (description !== "") {
+      return false;
+    }
+
+    if (partyType === 1) {
+      return (
+        firstName === "" &&
+        middleName === "" &&
+        lastName === "" &&
+        gender === 1 &&
+        dateEquals(birthDate, "2000-01-01T00:00:00.000Z")
+      );
+    } else if (partyType === 2) {
+      return customerName === "";
+    }
+  };
+
+  const disableAdd = () => {
+    if (partyType === 1) {
+      return firstName === "" || lastName === "";
+    } else if (partyType === 2) {
+      return customerName === "";
+    }
   };
 
   return (
-    <Dialog open={open} onClose={closeDialog}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Add Party</DialogTitle>
       <DialogContent>
         <div className={classes.content}>
@@ -240,13 +259,16 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
         </div>
       </DialogContent>
       <DialogActions>
-        {state === STATE_LOADING ? <CircularProgress /> : ""}
-        {state === STATE_FAILED ? "Add failed" : ""}
-        <Button onClick={closeDialog} variant="contained" color="secondary">
+        <Button
+          disabled={disableCancel()}
+          onClick={onCancel}
+          variant="contained"
+          color="secondary"
+        >
           Cancel
         </Button>
         <Button
-          disabled={!enableAdd()}
+          disabled={disableAdd()}
           onClick={onAdd}
           variant="contained"
           color="primary"
@@ -258,14 +280,11 @@ const AddPartyDialog = ({ open, state, closeDialog, onAddParty }) => {
   );
 };
 
-const mapState = state => ({
-  open: state.account.openAddPartyDialog,
-  state: state.account.addPartyState
-});
+const mapState = () => ({});
 
 const mapDispatch = dispatch => ({
-  closeDialog: () => dispatch(closeAddPartyDialog()),
-  onAddParty: body => dispatch(addParty(body))
+  onAddParty: body =>
+    dispatch(apiPost("/api/account/add-party", body, ADDED_PARTY))
 });
 
-export default connect(mapState, mapDispatch)(AddPartyDialog);
+export default connect(mapState, mapDispatch)(AddDialog);

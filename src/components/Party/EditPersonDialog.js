@@ -13,7 +13,6 @@ import {
   Select,
   MenuItem,
   Button,
-  CircularProgress,
   makeStyles
 } from "@material-ui/core";
 
@@ -24,9 +23,9 @@ import {
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
-import { closeEditPersonDialog, updatePersonAction } from "../actions/account";
-import { STATE_LOADING, STATE_FAILED } from "../reducers/account";
-import { dateEquals } from "../util";
+import { apiPost } from "../../actions";
+import { UPDATED_PERSON } from "../../actions/account";
+import { dateEquals } from "../../util";
 
 const useStyles = makeStyles(theme => ({
   select: {
@@ -49,12 +48,14 @@ const useStyles = makeStyles(theme => ({
 
 const EditPersonDialog = ({
   open,
-  state,
-  person,
-  closeDialog,
+  personId,
+  getPerson,
+  onClose,
   updatePerson
 }) => {
   const classes = useStyles();
+
+  const person = getPerson(personId);
 
   const [description, setDescription] = useState(person.description);
   const [firstName, setFirstName] = useState(person.firstName);
@@ -101,7 +102,7 @@ const EditPersonDialog = ({
     dateEquals(birthDate, person.birthDate);
 
   return (
-    <Dialog open={open} onClose={closeDialog}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit Person</DialogTitle>
       <DialogContent>
         <div className={classes.content}>
@@ -177,8 +178,6 @@ const EditPersonDialog = ({
         </div>
       </DialogContent>
       <DialogActions>
-        {state === STATE_LOADING ? <CircularProgress /> : ""}
-        {state === STATE_FAILED ? "Save failed" : ""}
         <Button
           disabled={disabled}
           onClick={onCancel}
@@ -201,27 +200,23 @@ const EditPersonDialog = ({
 };
 
 const mapState = createSelector(
-  state => state.account.openEditPersonDialog,
-  state => state.account.editPersonState,
   state => state.account.personMap,
-  state => state.account.editPersonId,
-  (open, state, personMap, id) => ({
-    open,
-    state,
-    person: personMap[id] || {
-      description: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      genderId: 1,
-      birthDate: "2000-01-01T00:00:00.000Z"
-    }
+  personMap => ({
+    getPerson: id =>
+      personMap[id] || {
+        description: "",
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        genderId: 1,
+        birthDate: "2000-01-01T00:00:00.000Z"
+      }
   })
 );
 
 const mapDispatch = dispatch => ({
-  closeDialog: () => dispatch(closeEditPersonDialog()),
-  updatePerson: body => dispatch(updatePersonAction(body))
+  updatePerson: body =>
+    dispatch(apiPost("/api/account/update-person", body, UPDATED_PERSON))
 });
 
 export default connect(mapState, mapDispatch)(EditPersonDialog);

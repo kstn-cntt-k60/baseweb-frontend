@@ -15,9 +15,9 @@ import {
   ListItem,
   Checkbox
 } from "@material-ui/core";
+import AddSecurityGroupDialog from "./SecurityGroup/AddDialog";
 
 import {
-  openAddSecurityGroupDialog,
   GOT_ALL_GROUPS_AND_PERMISSIONS,
   SAVED_GROUP_PERMISSIONS
 } from "../actions/security";
@@ -126,10 +126,11 @@ const SecurityPermission = ({
   securityPermissions,
   mapOfGroupIdToPermissionIdSet,
   getAllGroupsAndPermissions,
-  saveGroupPermissions,
-  openAddGroup
+  saveGroupPermissions
 }) => {
   const classes = useStyles();
+
+  const [openAdd, setOpenAdd] = useState(false);
 
   const [value, setValue] = useState(0);
   const [mapPermissions, setMapPermissions] = useState(
@@ -178,7 +179,11 @@ const SecurityPermission = ({
     <React.Fragment>
       <Divider />
       <div className={classes.header}>
-        <Fab className={classes.add} onClick={openAddGroup} color="secondary">
+        <Fab
+          className={classes.add}
+          onClick={() => setOpenAdd(true)}
+          color="secondary"
+        >
           <AddIcon />
         </Fab>
         <Typography className={classes.title} variant="h5">
@@ -218,6 +223,10 @@ const SecurityPermission = ({
           </TabPanel>
         ))}
       </div>
+      <AddSecurityGroupDialog
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+      />
     </React.Fragment>
   );
 };
@@ -261,8 +270,7 @@ const mapDispatch = dispatch => ({
         },
         SAVED_GROUP_PERMISSIONS
       )
-    ),
-  openAddGroup: () => dispatch(openAddSecurityGroupDialog())
+    )
 });
 
 export default connect(mapState, mapDispatch)(SecurityPermission);

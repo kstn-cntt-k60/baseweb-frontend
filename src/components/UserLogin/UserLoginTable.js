@@ -3,13 +3,9 @@ import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
 import {
-  userLoginConfigTable,
-  fetchUserLoginList,
-  openEditUserLoginDialog,
-  DELETED_USER_LOGIN,
-  userLoginSearchText
+  configUserLoginTable,
+  fetchUserLoginList
 } from "../../actions/account";
-import { apiPost, openYesNoDialog } from "../../actions";
 
 import {
   Paper,
@@ -43,8 +39,9 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "row",
     alignItems: "center",
     border: "solid",
-    borderWidth: focus ? "2px" : "1px",
+    borderWidth: "1px",
     borderColor: focus ? "blue" : "#aaa",
+    boxShadow: focus ? "0 0 10px 0 blue" : "none",
     marginTop: theme.spacing(1),
     width: 500,
     borderRadius: "15px",
@@ -64,54 +61,46 @@ const switchSortOrder = order => (order === "desc" ? "asc" : "desc");
 const UserLoginTable = ({
   entries,
   count,
-  page,
-  pageSize,
-  sortedBy,
-  sortOrder,
-  searchText,
+  config,
   fetchUserLogin,
   configTable,
-  openEdit,
-  openYesNoToDelete,
-  setSearchText
+  onEdit,
+  onDelete
 }) => {
-  const [text, setText] = useState(searchText);
+  const [text, setText] = useState(config.searchText);
   const [focus, setFocus] = useState(false);
 
   const classes = useStyles({ focus });
 
   useEffect(() => {
     fetchUserLogin();
-  }, [page, pageSize, sortedBy, sortOrder, searchText]);
+  }, [config]);
 
   const onPageChange = (_, newPage) => {
-    configTable(newPage, pageSize, sortedBy, sortOrder);
+    configTable({ page: newPage });
   };
 
   const onPageSizeChange = e => {
-    configTable(page, e.target.value, sortedBy, sortOrder);
+    configTable({ pageSize: e.target.value });
   };
+
+  const sortedBy = config.sortedBy;
+  const sortOrder = config.sortOrder;
+  const searchText = config.searchText;
 
   const onSortChange = name => {
     if (searchText !== "") return;
+
     if (name === sortedBy) {
-      configTable(page, pageSize, sortedBy, switchSortOrder(sortOrder));
+      configTable({ sortOrder: switchSortOrder(sortOrder) });
     } else {
-      configTable(page, pageSize, name, sortOrder);
+      configTable({ sortedBy: name });
     }
-  };
-
-  const onEdit = id => {
-    openEdit(id);
-  };
-
-  const onDelete = id => {
-    openYesNoToDelete(id);
   };
 
   const onSubmit = e => {
     e.preventDefault();
-    setSearchText(text);
+    configTable({ searchText: text });
   };
 
   return (
@@ -199,8 +188,8 @@ const UserLoginTable = ({
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={count}
-        rowsPerPage={pageSize}
-        page={page}
+        rowsPerPage={config.pageSize}
+        page={config.page}
         onChangePage={onPageChange}
         onChangeRowsPerPage={onPageSizeChange}
       />
@@ -212,21 +201,8 @@ const mapState = createSelector(
   state => state.account.userLoginMap,
   state => state.account.userLoginIdList,
   state => state.account.userLoginCount,
-  state => state.account.userLoginPage,
-  state => state.account.userLoginPageSize,
-  state => state.account.userLoginSortedBy,
-  state => state.account.userLoginSortOrder,
-  state => state.account.userLoginSearchText,
-  (
-    userLoginMap,
-    userLoginIdList,
-    count,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder,
-    searchText
-  ) => ({
+  state => state.account.userLoginTable,
+  (userLoginMap, userLoginIdList, count, config) => ({
     entries: userLoginIdList
       .map(id => userLoginMap[id])
       .map(u => ({
@@ -238,27 +214,13 @@ const mapState = createSelector(
         gender: getGender(u.genderId)
       })),
     count,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder,
-    searchText
+    config
   })
 );
 
 const mapDispatch = dispatch => ({
   fetchUserLogin: () => dispatch(fetchUserLoginList()),
-  configTable: (page, pageSize, sortedBy, sortOrder) =>
-    dispatch(userLoginConfigTable(page, pageSize, sortedBy, sortOrder)),
-  openEdit: id => dispatch(openEditUserLoginDialog(id)),
-  openYesNoToDelete: id =>
-    dispatch(
-      openYesNoDialog(
-        "Do you want to delete this login account?",
-        apiPost("/api/account/delete-user-login", { id }, DELETED_USER_LOGIN)
-      )
-    ),
-  setSearchText: text => dispatch(userLoginSearchText(text))
+  configTable: config => dispatch(configUserLoginTable(config))
 });
 
 export default connect(mapState, mapDispatch)(UserLoginTable);

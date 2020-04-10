@@ -37,8 +37,9 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "row",
     alignItems: "center",
     border: "solid",
-    borderWidth: focus ? "2px" : "1px",
+    borderWidth: "1px",
     borderColor: focus ? "blue" : "#aaa",
+    boxShadow: focus ? "0 0 10px 0 blue" : "none",
     marginTop: "16px",
     borderRadius: "15px",
     padding: "0px 10px"

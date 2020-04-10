@@ -5,7 +5,7 @@ import notifications from "./notifications";
 import account from "./account";
 import product from "./product";
 import facility from "./facility";
-import util from "./util";
+import importReducer from "./import";
 
 export default combineReducers({
   auth,
@@ -14,5 +14,5 @@ export default combineReducers({
   account,
   product,
   facility,
-  util
+  import: importReducer
 });

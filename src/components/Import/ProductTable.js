@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
 import {
-  productConfigTable,
-  fetchProductListAction
-} from "../../actions/product";
+  configProductTable,
+  fetchProductListByWarehouse
+} from "../../actions/import";
 
 import {
   Paper,
@@ -19,9 +19,12 @@ import {
   TablePagination,
   makeStyles
 } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
+
 import SearchIcon from "@material-ui/icons/Search";
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+
+import ProductInfoLink from "../Product/ProductInfoLink";
 
 import { formatTime } from "../../util";
 
@@ -39,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     border: "solid",
     borderWidth: "1px",
     borderColor: focus ? "blue" : "#aaa",
-    boxShadow: focus ? "0 0 10px 0px blue" : "none",
+    boxShadow: focus ? "0 0 10px 0 blue" : "none",
     marginTop: theme.spacing(1),
     width: 500,
     borderRadius: "15px",
@@ -57,46 +60,46 @@ const useStyles = makeStyles(theme => ({
 const switchSortOrder = order => (order === "desc" ? "asc" : "desc");
 
 const ProductTable = ({
+  warehouseId,
   entries,
   productCount,
-  page,
-  pageSize,
-  sortedBy,
-  sortOrder,
-  searchText,
-  onEdit,
-  onDelete,
+  config,
   fetchProductList,
-  configTable
+  configTable,
+  onAddItem,
+  onMoreInfo
 }) => {
-  const [text, setText] = useState(searchText);
+  const [text, setText] = useState(config.searchText);
   const [focus, setFocus] = useState(false);
 
   const classes = useStyles({ focus });
 
   useEffect(() => {
-    fetchProductList();
-  }, [page, pageSize, sortedBy, sortOrder, searchText]);
+    fetchProductList(warehouseId);
+  }, [config]);
+
+  const sortedBy = config.sortedBy;
+  const sortOrder = config.sortOrder;
 
   const onPageChange = (_, newPage) => {
-    configTable(newPage, pageSize, sortedBy, sortOrder, text);
+    configTable({ page: newPage });
   };
 
   const onPageSizeChange = e => {
-    configTable(page, e.target.value, sortedBy, sortOrder, text);
+    configTable({ pageSize: e.target.value });
   };
 
   const onSortChange = name => {
     if (name === sortedBy) {
-      configTable(page, pageSize, sortedBy, switchSortOrder(sortOrder), text);
+      configTable({ sortOrder: switchSortOrder(sortOrder) });
     } else {
-      configTable(page, pageSize, name, sortOrder, text);
+      configTable({ sortedBy: name });
     }
   };
 
   const onSubmit = e => {
     e.preventDefault();
-    configTable(page, pageSize, sortedBy, sortOrder, text);
+    configTable({ searchText: text });
   };
 
   return (
@@ -130,15 +133,8 @@ const ProductTable = ({
               </TableCell>
               <TableCell className={classes.tableHead}>Weight</TableCell>
               <TableCell className={classes.tableHead}>Unit</TableCell>
-              <TableCell className={classes.tableHead}>Created By</TableCell>
               <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={text === "" && sortedBy === "createdAt"}
-                  onClick={() => onSortChange("createdAt")}
-                  direction={sortOrder}
-                >
-                  Created At
-                </TableSortLabel>
+                Total Quantity
               </TableCell>
               <TableCell className={classes.tableHead}>
                 <TableSortLabel
@@ -149,7 +145,6 @@ const ProductTable = ({
                   Updated At
                 </TableSortLabel>
               </TableCell>
-              <TableCell className={classes.tableHead}>Description</TableCell>
               <TableCell className={classes.tableHead}></TableCell>
               <TableCell className={classes.tableHead}></TableCell>
             </TableRow>
@@ -157,23 +152,23 @@ const ProductTable = ({
           <TableBody>
             {entries.map(e => (
               <TableRow key={e.id}>
-                <TableCell>{e.name}</TableCell>
+                <TableCell>
+                  <ProductInfoLink id={e.id} name={e.name} />
+                </TableCell>
                 <TableCell>{e.weight}</TableCell>
                 <TableCell>{e.unitUomId}</TableCell>
-                <TableCell>{e.createdBy}</TableCell>
-                <TableCell>{e.createdAt}</TableCell>
+                <TableCell>{e.totalQuantity}</TableCell>
                 <TableCell>{e.updatedAt}</TableCell>
-                <TableCell>{e.description}</TableCell>
                 <TableCell>
-                  <EditIcon
+                  <AddCircleOutlineIcon
                     className={classes.iconButton}
-                    onClick={() => onEdit(e.id)}
+                    onClick={() => onAddItem(e.id)}
                   />
                 </TableCell>
                 <TableCell>
-                  <DeleteIcon
+                  <MoreVertIcon
                     className={classes.iconButton}
-                    onClick={() => onDelete(e.id)}
+                    onClick={() => onMoreInfo(e.id)}
                   />
                 </TableCell>
               </TableRow>
@@ -185,8 +180,8 @@ const ProductTable = ({
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={productCount}
-        rowsPerPage={pageSize}
-        page={page}
+        rowsPerPage={config.pageSize}
+        page={config.page}
         onChangePage={onPageChange}
         onChangeRowsPerPage={onPageSizeChange}
       />
@@ -195,47 +190,26 @@ const ProductTable = ({
 };
 
 const mapState = createSelector(
-  state => state.product.productMap,
-  state => state.product.productIdList,
-  state => state.product.productCount,
-  state => state.product.productPage,
-  state => state.product.productPageSize,
-  state => state.product.productSortedBy,
-  state => state.product.productSortOrder,
-  state => state.product.productSearchText,
-  (
-    productMap,
-    productIdList,
-    productCount,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder,
-    searchText
-  ) => ({
+  state => state.import.productMap,
+  state => state.import.productIdList,
+  state => state.import.productCount,
+  state => state.import.productTable,
+  (productMap, productIdList, productCount, config) => ({
+    config,
     entries: productIdList
       .map(id => productMap[id])
       .map(p => ({
         ...p,
         weight: p.weight === null ? "" : `${p.weight}${p.weightUomId}`,
-        createdAt: formatTime(p.createdAt),
-        updatedAt: formatTime(p.updatedAt)
+        updatedAt: p.updatedAt ? formatTime(p.updatedAt) : "None"
       })),
-    productCount,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder,
-    searchText
+    productCount
   })
 );
 
 const mapDispatch = dispatch => ({
-  fetchProductList: () => dispatch(fetchProductListAction()),
-  configTable: (page, pageSize, sortedBy, sortOrder, searchText = "") =>
-    dispatch(
-      productConfigTable(page, pageSize, sortedBy, sortOrder, searchText)
-    )
+  fetchProductList: id => dispatch(fetchProductListByWarehouse(id)),
+  configTable: config => dispatch(configProductTable(config))
 });
 
 export default connect(mapState, mapDispatch)(ProductTable);

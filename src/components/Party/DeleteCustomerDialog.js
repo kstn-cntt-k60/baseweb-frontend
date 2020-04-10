@@ -8,7 +8,9 @@ import {
   makeStyles
 } from "@material-ui/core";
 import { connect } from "react-redux";
-import { closeYesNoDialog } from "../actions";
+
+import { apiPost } from "../../actions";
+import { DELETED_CUSTOMER } from "../../actions/account";
 
 const useStyles = makeStyles(() => ({
   dialog: {
@@ -16,12 +18,20 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const YesNoDialog = ({ open, title, action, onClose, onYes }) => {
+const DeleteCustomerDialog = ({
+  open,
+  customerId,
+  onClose,
+  deleteCustomer
+}) => {
   const classes = useStyles();
 
   const handleYes = () => {
-    onYes(action);
+    deleteCustomer(customerId);
+    onClose();
   };
+
+  const title = "Do you want to delete this customer?";
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -40,15 +50,11 @@ const YesNoDialog = ({ open, title, action, onClose, onYes }) => {
   );
 };
 
-const mapState = state => ({
-  open: state.util.openYesNoDialog,
-  title: state.util.yesNoTitle,
-  action: state.util.yesNoAction
-});
+const mapState = () => ({});
 
 const mapDispatch = dispatch => ({
-  onClose: () => dispatch(closeYesNoDialog()),
-  onYes: action => dispatch(action)
+  deleteCustomer: id =>
+    dispatch(apiPost("/api/account/delete-customer", { id }, DELETED_CUSTOMER))
 });
 
-export default connect(mapState, mapDispatch)(YesNoDialog);
+export default connect(mapState, mapDispatch)(DeleteCustomerDialog);

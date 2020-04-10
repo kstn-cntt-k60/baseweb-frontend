@@ -10,15 +10,11 @@ import {
   TextField,
   FormControl,
   Button,
-  CircularProgress,
   makeStyles
 } from "@material-ui/core";
 
-import {
-  closeEditUserLoginDialog,
-  updateUserLoginAction
-} from "../actions/account";
-import { STATE_LOADING, STATE_FAILED } from "../reducers/account";
+import { apiPost } from "../../actions";
+import { UPDATED_USER_LOGIN } from "../../actions/account";
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -31,14 +27,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EditUserLoginDialog = ({
+const EditDialog = ({
   open,
-  state,
-  userLogin,
-  closeDialog,
+  userLoginId,
+  getUserLogin,
+  onClose,
   updateUserLogin
 }) => {
   const classes = useStyles();
+
+  const userLogin = getUserLogin(userLoginId);
 
   const [username, setUsername] = useState(userLogin.username);
   const [enableResetPassword, setEnableResetPassword] = useState(false);
@@ -54,7 +52,7 @@ const EditUserLoginDialog = ({
 
   useEffect(() => {
     resetValues();
-  }, [userLogin.id]);
+  }, [userLoginId]);
 
   const onCancel = () => {
     resetValues();
@@ -66,6 +64,7 @@ const EditUserLoginDialog = ({
       username,
       password
     });
+    onClose();
   };
 
   const onResetPassword = () => {
@@ -76,7 +75,7 @@ const EditUserLoginDialog = ({
     username === userLogin.username && enableResetPassword === false;
 
   return (
-    <Dialog open={open} onClose={closeDialog}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Edit User Login</DialogTitle>
       <DialogContent>
         <div className={classes.content}>
@@ -96,7 +95,7 @@ const EditUserLoginDialog = ({
                 <TextField
                   margin="dense"
                   label="New Password"
-                  type="text"
+                  type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   fullWidth
@@ -106,7 +105,7 @@ const EditUserLoginDialog = ({
                 <TextField
                   margin="dense"
                   label="Password Confirmation"
-                  type="text"
+                  type="password"
                   value={passwordConfirm}
                   error={password !== passwordConfirm}
                   helperText={
@@ -130,8 +129,6 @@ const EditUserLoginDialog = ({
         </div>
       </DialogContent>
       <DialogActions>
-        {state === STATE_LOADING ? <CircularProgress /> : ""}
-        {state === STATE_FAILED ? "Save failed" : ""}
         <Button
           disabled={disabled}
           onClick={onCancel}
@@ -154,23 +151,21 @@ const EditUserLoginDialog = ({
 };
 
 const mapState = createSelector(
-  state => state.account.openEditUserLoginDialog,
-  state => state.account.editUserLoginState,
   state => state.account.userLoginMap,
-  state => state.account.editUserLoginId,
-  (open, state, userLoginMap, id) => ({
-    open,
-    state,
-    userLogin: userLoginMap[id] || {
-      id: null,
-      username: ""
-    }
+  userLoginMap => ({
+    getUserLogin: id =>
+      userLoginMap[id] || {
+        id: null,
+        username: ""
+      }
   })
 );
 
 const mapDispatch = dispatch => ({
-  closeDialog: () => dispatch(closeEditUserLoginDialog()),
-  updateUserLogin: body => dispatch(updateUserLoginAction(body))
+  updateUserLogin: body =>
+    dispatch(
+      apiPost("/api/account/update-user-login", body, UPDATED_USER_LOGIN)
+    )
 });
 
-export default connect(mapState, mapDispatch)(EditUserLoginDialog);
+export default connect(mapState, mapDispatch)(EditDialog);
