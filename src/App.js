@@ -16,6 +16,7 @@ import CustomerStore from "./components/Facility/CustomerStore";
 import Import from "./components/Import";
 import ImportWarehouse from "./components/Import/ImportWarehouse";
 import ImportWarehouseProduct from "./components/Import/ImportWarehouseProduct";
+import AddOrder from "./components/Order/AddOrder";
 
 const App = () => (
   <React.Fragment>
@@ -52,6 +53,12 @@ const App = () => (
         <PrivateRoute path="/security/permission">
           <MainLayout>
             <SecurityPermission />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/order/add">
+          <MainLayout>
+            <AddOrder />
           </MainLayout>
         </PrivateRoute>
 

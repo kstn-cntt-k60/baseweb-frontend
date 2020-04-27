@@ -19,6 +19,7 @@ import accountSaga from "./account";
 import productSaga from "./product";
 import facilitySaga from "./facility";
 import importSaga from "./import";
+import orderSaga from "./order";
 
 function* loginSaga(action) {
   const response = yield call(apiLogin, action.username, action.password);
@@ -104,6 +105,7 @@ function* rootSaga() {
   yield* securitySaga();
   yield* accountSaga();
   yield* productSaga();
+  yield* orderSaga();
   yield* facilitySaga();
   yield* importSaga();
 }

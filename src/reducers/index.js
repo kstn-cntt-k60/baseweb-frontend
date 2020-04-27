@@ -6,12 +6,14 @@ import account from "./account";
 import product from "./product";
 import facility from "./facility";
 import importReducer from "./import";
+import order from "./order";
 
 export default combineReducers({
   auth,
   security,
   notifications,
   account,
+  order,
   product,
   facility,
   import: importReducer
