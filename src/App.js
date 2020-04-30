@@ -17,6 +17,8 @@ import Import from "./components/Import";
 import ImportWarehouse from "./components/Import/ImportWarehouse";
 import ImportWarehouseProduct from "./components/Import/ImportWarehouseProduct";
 import AddOrder from "./components/Order/AddOrder";
+import ViewOrders from "./components/Order/ViewOrders";
+import ViewOrder from "./components/Order/ViewOrder";
 
 const App = () => (
   <React.Fragment>
@@ -62,9 +64,15 @@ const App = () => (
           </MainLayout>
         </PrivateRoute>
 
-        <PrivateRoute path="/order/view-edit">
+        <PrivateRoute path="/order/view">
           <MainLayout>
-            <h2>Orders</h2>
+            <ViewOrders />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute noPreviousUrl path="/order/view-order/:orderId">
+          <MainLayout>
+            <ViewOrder />
           </MainLayout>
         </PrivateRoute>
 

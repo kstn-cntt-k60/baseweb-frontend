@@ -122,8 +122,8 @@ const NavBar = ({ open, handleNavBarClose }) => {
               permission: "VIEW_EDIT_ORDER"
             },
             {
-              text: "View & Edit",
-              url: "view-edit",
+              text: "View Orders",
+              url: "view",
               permission: "VIEW_EDIT_ORDER"
             }
           ]}

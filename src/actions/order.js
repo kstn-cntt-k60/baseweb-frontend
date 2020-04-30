@@ -17,6 +17,12 @@ export const GOT_CUSTOMER_STORE_LIST = "order/GOT_CUSTOMER_STORE_LIST";
 export const ADDED_ORDER = "ADDED_ORDER";
 export const ADD_ORDER_FAILED = "ADD_ORDER_FAILED";
 
+export const CONFIG_ORDER_TABLE = "CONFIG_ORDER_TABLE";
+export const FETCH_ORDER_LIST = "FETCH_ORDER_LIST";
+export const GOT_ORDER_LIST = "GOT_ORDER_LIST";
+
+export const GOT_SINGLE_ORDER = "GOT_SINGLE_ORDER";
+
 export const configCustomerTable = config => ({
   type: CONFIG_CUSTOMER_TABLE,
   config
@@ -53,4 +59,13 @@ export const configCustomerStoreTable = config => ({
 export const fetchCustomerStoreList = customerId => ({
   type: FETCH_CUSTOMER_STORE_LIST,
   customerId
+});
+
+export const configOrderTable = config => ({
+  type: CONFIG_ORDER_TABLE,
+  config
+});
+
+export const fetchOrderList = () => ({
+  type: FETCH_ORDER_LIST
 });

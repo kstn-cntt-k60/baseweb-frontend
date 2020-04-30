@@ -17,7 +17,9 @@ import {
   FETCH_CUSTOMER_STORE_LIST,
   GOT_CUSTOMER_STORE_LIST,
   ADDED_ORDER,
-  ADD_ORDER_FAILED
+  ADD_ORDER_FAILED,
+  FETCH_ORDER_LIST,
+  GOT_ORDER_LIST
 } from "../actions/order";
 
 function* fetchCustomerListSaga() {
@@ -86,6 +88,14 @@ function* addOrderFailedSaga({ status }) {
   );
 }
 
+function* fetchOrderListSaga() {
+  const config = yield select(state => state.order.view.orderTable);
+
+  yield put(
+    apiGet(urlWithParams("/api/order/view-sale-order", config), GOT_ORDER_LIST)
+  );
+}
+
 function* orderSaga() {
   yield takeEvery(FETCH_CUSTOMER_LIST, fetchCustomerListSaga);
   yield takeEvery(FETCH_WAREHOUSE_LIST, fetchWarehouseListSaga);
@@ -93,6 +103,8 @@ function* orderSaga() {
   yield takeEvery(FETCH_CUSTOMER_STORE_LIST, fetchCustomerStoreListSaga);
   yield takeEvery(ADDED_ORDER, addedOrderSaga);
   yield takeEvery(ADD_ORDER_FAILED, addOrderFailedSaga);
+
+  yield takeEvery(FETCH_ORDER_LIST, fetchOrderListSaga);
 }
 
 export default orderSaga;
