@@ -3,7 +3,10 @@ import { connect } from "react-redux";
 import { createSelector } from "reselect";
 import { useHistory } from "react-router-dom";
 
-import { configOrderTable, fetchOrderList } from "../../../actions/order";
+import {
+  configCompletedOrderTable,
+  fetchCompletedOrderList
+} from "../../actions/export";
 
 import {
   Paper,
@@ -15,14 +18,10 @@ import {
   TableBody,
   TableSortLabel,
   TablePagination,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   makeStyles
 } from "@material-ui/core";
 
-import { formatTime } from "../../../util";
+import { formatTime } from "../../util";
 
 const useStyles = makeStyles(theme => ({
   tableHead: {
@@ -34,9 +33,8 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: "#eee"
     }
   },
-  statusFilter: {
-    width: 200,
-    margin: theme.spacing(1)
+  spacing: {
+    marginTop: theme.spacing(1)
   }
 }));
 
@@ -57,7 +55,7 @@ const statusFromStatusId = statusId => {
   }
 };
 
-const OrderTable = ({
+const CompletedOrderTable = ({
   entries,
   orderCount,
   config,
@@ -66,10 +64,6 @@ const OrderTable = ({
 }) => {
   const classes = useStyles();
   const history = useHistory();
-
-  const onStatusFilterChange = e => {
-    configTable({ statusId: e.target.value });
-  };
 
   useEffect(() => {
     fetchOrder();
@@ -95,26 +89,11 @@ const OrderTable = ({
   const sortOrder = config.sortOrder;
 
   const onSelectRow = id => {
-    history.push(`/order/view-order/${id}`);
+    history.push(`/import-export/export-order-item/${id}`);
   };
 
   return (
-    <Paper>
-      <FormControl className={classes.statusFilter}>
-        <InputLabel id="status-filter-label">Filter Status</InputLabel>
-        <Select
-          labelId="status-filter-label"
-          value={config.statusId}
-          onChange={onStatusFilterChange}
-        >
-          <MenuItem value={""}>No Filter</MenuItem>
-          <MenuItem value={1}>Created</MenuItem>
-          <MenuItem value={2}>Accepted</MenuItem>
-          <MenuItem value={3}>Shipping</MenuItem>
-          <MenuItem value={4}>Completed</MenuItem>
-          <MenuItem value={5}>Canceled</MenuItem>
-        </Select>
-      </FormControl>
+    <Paper className={classes.spacing}>
       <TableContainer>
         <Table>
           <TableHead>
@@ -183,10 +162,10 @@ const OrderTable = ({
 };
 
 const mapState = createSelector(
-  state => state.order.view.orderMap,
-  state => state.order.view.orderIdList,
-  state => state.order.view.orderCount,
-  state => state.order.view.orderTable,
+  state => state.export.completedOrderMap,
+  state => state.export.completedOrderIdList,
+  state => state.export.completedOrderCount,
+  state => state.export.completedOrderTable,
   (orderMap, orderIdList, orderCount, config) => ({
     entries: orderIdList
       .map(id => orderMap[id])
@@ -202,8 +181,8 @@ const mapState = createSelector(
 );
 
 const mapDispatch = dispatch => ({
-  fetchOrder: () => dispatch(fetchOrderList()),
-  configTable: config => dispatch(configOrderTable(config))
+  fetchOrder: () => dispatch(fetchCompletedOrderList()),
+  configTable: config => dispatch(configCompletedOrderTable(config))
 });
 
-export default connect(mapState, mapDispatch)(OrderTable);
+export default connect(mapState, mapDispatch)(CompletedOrderTable);

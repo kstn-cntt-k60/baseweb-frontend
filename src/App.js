@@ -19,6 +19,8 @@ import ImportWarehouseProduct from "./components/Import/ImportWarehouseProduct";
 import AddOrder from "./components/Order/AddOrder";
 import ViewOrders from "./components/Order/ViewOrders";
 import ViewOrder from "./components/Order/ViewOrder";
+import Export from "./components/Export";
+import ExportOrderItem from "./components/Export/OrderItem";
 
 const App = () => (
   <React.Fragment>
@@ -70,7 +72,7 @@ const App = () => (
           </MainLayout>
         </PrivateRoute>
 
-        <PrivateRoute noPreviousUrl path="/order/view-order/:orderId">
+        <PrivateRoute path="/order/view-order/:orderId">
           <MainLayout>
             <ViewOrder />
           </MainLayout>
@@ -106,18 +108,27 @@ const App = () => (
           </MainLayout>
         </PrivateRoute>
 
-        <PrivateRoute noPreviousUrl path="/import-export/import-warehouse/:id">
+        <PrivateRoute path="/import-export/import-warehouse/:id">
           <MainLayout>
             <ImportWarehouse />
           </MainLayout>
         </PrivateRoute>
 
-        <PrivateRoute
-          noPreviousUrl
-          path="/import-export/import-warehouse-product/:warehouseId/:productId"
-        >
+        <PrivateRoute path="/import-export/import-warehouse-product/:warehouseId/:productId">
           <MainLayout>
             <ImportWarehouseProduct />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/import-export/export">
+          <MainLayout>
+            <Export />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/import-export/export-order-item/:orderId">
+          <MainLayout>
+            <ExportOrderItem />
           </MainLayout>
         </PrivateRoute>
 

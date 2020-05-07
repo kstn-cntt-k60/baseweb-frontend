@@ -5,12 +5,11 @@ import { createSelector } from "reselect";
 
 import { Button, Paper, makeStyles } from "@material-ui/core";
 
-import { formatTime } from "../../../util";
-import { fetchSingleOrder } from "../../../actions/order";
+import { formatTime } from "../../util";
+import { fetchSingleOrder } from "../../actions/export";
 
 import OrderItemTable from "./OrderItemTable";
-import AcceptDialog from "./AcceptDialog";
-import CancelDialog from "./CancelDialog";
+import CompleteDialog from "./CompleteDialog";
 
 const useStyles = makeStyles(theme => ({
   info: {
@@ -27,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   status: {
     color: "red"
   },
-  accept: {
+  complete: {
     marginLeft: theme.spacing(1)
   }
 }));
@@ -47,12 +46,11 @@ const statusFromStatusId = statusId => {
   }
 };
 
-const ViewOrder = ({ order, items, totalPrices, fetchOrder }) => {
+const OrderItem = ({ order, items, totalPrices, fetchOrder }) => {
   const classes = useStyles();
   const { orderId } = useParams();
 
-  const [openAccept, setOpenAccept] = useState(false);
-  const [openCancel, setOpenCancel] = useState(false);
+  const [openComplete, setOpenComplete] = useState(false);
 
   useEffect(() => {
     fetchOrder(orderId);
@@ -68,25 +66,15 @@ const ViewOrder = ({ order, items, totalPrices, fetchOrder }) => {
         <h4>To Customer Store: {order.customerStore}</h4>
         <h4>
           Status: <span className={classes.status}>{order.status}</span>
-          {order.statusId === 1 ? (
-            <React.Fragment>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.accept}
-                onClick={() => setOpenAccept(true)}
-              >
-                Accept
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                className={classes.accept}
-                onClick={() => setOpenCancel(true)}
-              >
-                Cancel
-              </Button>
-            </React.Fragment>
+          {order.statusId === 3 ? (
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.complete}
+              onClick={() => setOpenComplete(true)}
+            >
+              Complete
+            </Button>
           ) : (
             ""
           )}
@@ -102,16 +90,12 @@ const ViewOrder = ({ order, items, totalPrices, fetchOrder }) => {
           ))}
         </h4>
       </Paper>
-      <OrderItemTable items={items} />
-      <AcceptDialog
-        open={openAccept}
-        onClose={() => setOpenAccept(false)}
-        orderId={orderId}
-      />
-      <CancelDialog
-        open={openCancel}
-        onClose={() => setOpenCancel(false)}
-        orderId={orderId}
+
+      <OrderItemTable orderId={order && order.id} items={items} />
+      <CompleteDialog
+        open={openComplete}
+        orderId={order && order.id}
+        onClose={() => setOpenComplete(false)}
       />
     </div>
   ) : (
@@ -131,8 +115,8 @@ const computeTotalPrices = items => {
 };
 
 const mapState = createSelector(
-  state => state.order.view.currentOrder,
-  state => state.order.view.orderItems,
+  state => state.export.currentOrder,
+  state => state.export.orderItems,
   (order, items) => ({
     order: order && {
       ...order,
@@ -149,4 +133,4 @@ const mapDispatch = dispatch => ({
   fetchOrder: saleOrderId => dispatch(fetchSingleOrder(saleOrderId))
 });
 
-export default connect(mapState, mapDispatch)(ViewOrder);
+export default connect(mapState, mapDispatch)(OrderItem);

@@ -19,7 +19,10 @@ import {
   ADDED_ORDER,
   ADD_ORDER_FAILED,
   FETCH_ORDER_LIST,
-  GOT_ORDER_LIST
+  GOT_ORDER_LIST,
+  ACCEPTED_SALES_ORDER,
+  CANCELED_SALES_ORDER,
+  fetchSingleOrder
 } from "../actions/order";
 
 function* fetchCustomerListSaga() {
@@ -96,6 +99,22 @@ function* fetchOrderListSaga() {
   );
 }
 
+function* acceptedSalesOrderSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Accept order sucessfully"));
+
+  const orderId = yield select(state => state.order.view.currentOrder.id);
+  yield put(fetchSingleOrder(orderId));
+}
+
+function* canceledSalesOrderSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Cancel order sucessfully"));
+
+  const orderId = yield select(state => state.order.view.currentOrder.id);
+  yield put(fetchSingleOrder(orderId));
+}
+
 function* orderSaga() {
   yield takeEvery(FETCH_CUSTOMER_LIST, fetchCustomerListSaga);
   yield takeEvery(FETCH_WAREHOUSE_LIST, fetchWarehouseListSaga);
@@ -105,6 +124,9 @@ function* orderSaga() {
   yield takeEvery(ADD_ORDER_FAILED, addOrderFailedSaga);
 
   yield takeEvery(FETCH_ORDER_LIST, fetchOrderListSaga);
+
+  yield takeEvery(ACCEPTED_SALES_ORDER, acceptedSalesOrderSaga);
+  yield takeEvery(CANCELED_SALES_ORDER, canceledSalesOrderSaga);
 }
 
 export default orderSaga;

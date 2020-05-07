@@ -1,3 +1,5 @@
+import { apiGet, urlWithParams } from "./index";
+
 export const CONFIG_CUSTOMER_TABLE = "order/CONFIG_CUSTOMER_TABLE";
 export const FETCH_CUSTOMER_LIST = "order/FETCH_CUSTOMER_LIST";
 export const GOT_CUSTOMER_LIST = "order/GOT_CUSTOMER_LIST";
@@ -22,6 +24,9 @@ export const FETCH_ORDER_LIST = "FETCH_ORDER_LIST";
 export const GOT_ORDER_LIST = "GOT_ORDER_LIST";
 
 export const GOT_SINGLE_ORDER = "GOT_SINGLE_ORDER";
+
+export const ACCEPTED_SALES_ORDER = "ACCEPTED_SALES_ORDER";
+export const CANCELED_SALES_ORDER = "CANCELED_SALES_ORDER";
 
 export const configCustomerTable = config => ({
   type: CONFIG_CUSTOMER_TABLE,
@@ -69,3 +74,9 @@ export const configOrderTable = config => ({
 export const fetchOrderList = () => ({
   type: FETCH_ORDER_LIST
 });
+
+export const fetchSingleOrder = saleOrderId =>
+  apiGet(
+    urlWithParams("/api/order/view-single-sale-order", { saleOrderId }),
+    GOT_SINGLE_ORDER
+  );

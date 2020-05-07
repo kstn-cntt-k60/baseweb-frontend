@@ -14,7 +14,8 @@ const initialState = {
     page: 0,
     pageSize: 5,
     sortedBy: "createdAt",
-    sortOrder: "desc"
+    sortOrder: "desc",
+    statusId: ""
   },
 
   currentOrder: null,

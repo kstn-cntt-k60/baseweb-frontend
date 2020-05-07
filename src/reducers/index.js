@@ -7,6 +7,7 @@ import product from "./product";
 import facility from "./facility";
 import importReducer from "./import";
 import order from "./order";
+import exportReducer from "./export";
 
 export default combineReducers({
   auth,
@@ -16,5 +17,6 @@ export default combineReducers({
   order,
   product,
   facility,
-  import: importReducer
+  import: importReducer,
+  export: exportReducer
 });
