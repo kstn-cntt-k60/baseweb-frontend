@@ -33,9 +33,11 @@ export const setSwitch = (s, e) => {
   }
 };
 
-const zeroPad = (num, size) => {
+export const zeroPad = (num, size) => {
   const s = "000000000" + num;
-  return s.substr(s.length - size);
+  const numLen = num.toString().length;
+  const newSize = numLen > size ? numLen : size;
+  return s.substr(s.length - newSize);
 };
 
 export const formatDate = dateString => {
@@ -71,7 +73,7 @@ export const getGender = genderId => {
 };
 
 const getUTCDate = d => {
-  const date = new Date(d);
+  const date = normalizeDate(d);
   const day = date.getUTCDate();
   const month = date.getUTCMonth() + 1;
   const year = date.getUTCFullYear();
@@ -84,4 +86,12 @@ export const dateEquals = (dateA, dateB) => {
   const b = getUTCDate(dateB);
 
   return a.day === b.day && a.month === b.month && a.year === b.year;
+};
+
+export const normalizeDate = d => {
+  const date = new Date(d);
+  const day = date.getDate();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  return new Date(Date.UTC(year, month, day));
 };

@@ -21,6 +21,10 @@ import ViewOrders from "./components/Order/ViewOrders";
 import ViewOrder from "./components/Order/ViewOrder";
 import Export from "./components/Export";
 import ExportOrderItem from "./components/Export/OrderItem";
+import Salesman from "./components/SalesRoute/Salesman";
+import SalesRoute from "./components/SalesRoute";
+import PlanningPeriodDetail from "./components/SalesRoute/PlanningPeriodDetail";
+import ConfigIndex from "./components/SalesRoute/ConfigIndex";
 
 const App = () => (
   <React.Fragment>
@@ -129,6 +133,30 @@ const App = () => (
         <PrivateRoute path="/import-export/export-order-item/:orderId">
           <MainLayout>
             <ExportOrderItem />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/salesman">
+          <MainLayout>
+            <Salesman />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/config">
+          <MainLayout>
+            <ConfigIndex />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/planning">
+          <MainLayout>
+            <SalesRoute />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/planning-period-detail/:id">
+          <MainLayout>
+            <PlanningPeriodDetail />
           </MainLayout>
         </PrivateRoute>
 
