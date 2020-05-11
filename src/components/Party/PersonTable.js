@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import { personConfigTable, fetchPersonList } from "../../actions/account";
+import { configPersonTable, fetchPersonList } from "../../actions/account";
 
 import {
   Paper,
@@ -16,17 +16,39 @@ import {
   TablePagination,
   makeStyles
 } from "@material-ui/core";
+
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
+import SearchIcon from "@material-ui/icons/Search";
 
 import { getGender, formatTime, formatDate } from "../../util";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   tableHead: {
     fontWeight: "bold"
   },
   iconButton: {
     cursor: "pointer"
+  },
+  search: ({ focus }) => ({
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    border: "solid",
+    borderWidth: "1px",
+    borderColor: focus ? "blue" : "#aaa",
+    boxShadow: focus ? "0 0 10px 0 blue" : "none",
+    marginTop: theme.spacing(1),
+    width: 500,
+    borderRadius: "15px",
+    padding: "0px 10px"
+  }),
+  searchInput: {
+    outline: "none",
+    width: "100%",
+    border: "none",
+    height: "35px",
+    fontSize: theme.typography.htmlFontSize
   }
 }));
 
@@ -35,39 +57,61 @@ const switchSortOrder = order => (order === "desc" ? "asc" : "desc");
 const PersonTable = ({
   entries,
   personCount,
-  page,
-  pageSize,
-  sortedBy,
-  sortOrder,
-  fetchPersonList,
+  config,
+  fetchPerson,
   configTable,
   onEdit,
   onDelete
 }) => {
-  const classes = useStyles();
+  const [text, setText] = useState(config.searchText);
+  const [focus, setFocus] = useState(false);
+
+  const classes = useStyles({ focus });
 
   useEffect(() => {
-    fetchPersonList();
-  }, [page, pageSize, sortedBy, sortOrder]);
+    fetchPerson();
+  }, [config]);
 
   const onPageChange = (_, newPage) => {
-    configTable(newPage, pageSize, sortedBy, sortOrder);
+    configTable({ page: newPage });
   };
 
   const onPageSizeChange = e => {
-    configTable(page, e.target.value, sortedBy, sortOrder);
+    configTable({ pageSize: e.target.value });
   };
 
   const onSortChange = name => {
-    if (name === sortedBy) {
-      configTable(page, pageSize, sortedBy, switchSortOrder(sortOrder));
+    if (name === config.sortedBy) {
+      configTable({ sortOrder: switchSortOrder(config.sortOrder) });
     } else {
-      configTable(page, pageSize, name, sortOrder);
+      configTable({ sortedBy: name });
     }
   };
 
+  const onSubmit = e => {
+    e.preventDefault();
+    configTable({ searchText: text });
+  };
+
+  const sortedBy = config.sortedBy;
+  const sortOrder = config.sortOrder;
+
   return (
     <Paper>
+      <form onSubmit={onSubmit}>
+        <div className={classes.search}>
+          <SearchIcon />
+          <input
+            className={classes.searchInput}
+            placeholder="Search Person ..."
+            type="text"
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onFocus={() => setFocus(true)}
+            onBlur={() => setFocus(false)}
+          />
+        </div>
+      </form>
       <TableContainer>
         <Table>
           <TableHead>
@@ -148,8 +192,8 @@ const PersonTable = ({
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={personCount}
-        rowsPerPage={pageSize}
-        page={page}
+        rowsPerPage={config.pageSize}
+        page={config.page}
         onChangePage={onPageChange}
         onChangeRowsPerPage={onPageSizeChange}
       />
@@ -161,19 +205,8 @@ const mapState = createSelector(
   state => state.account.personMap,
   state => state.account.personIdList,
   state => state.account.personCount,
-  state => state.account.personPage,
-  state => state.account.personPageSize,
-  state => state.account.personSortedBy,
-  state => state.account.personSortOrder,
-  (
-    personMap,
-    personIdList,
-    personCount,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder
-  ) => ({
+  state => state.account.personTable,
+  (personMap, personIdList, personCount, config) => ({
     entries: personIdList
       .map(id => personMap[id])
       .map(p => ({
@@ -184,17 +217,13 @@ const mapState = createSelector(
         updatedAt: formatTime(p.updatedAt)
       })),
     personCount,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder
+    config
   })
 );
 
 const mapDispatch = dispatch => ({
-  fetchPersonList: () => dispatch(fetchPersonList()),
-  configTable: (page, pageSize, sortedBy, sortOrder) =>
-    dispatch(personConfigTable(page, pageSize, sortedBy, sortOrder))
+  fetchPerson: () => dispatch(fetchPersonList()),
+  configTable: config => dispatch(configPersonTable(config))
 });
 
 export default connect(mapState, mapDispatch)(PersonTable);

@@ -27,23 +27,22 @@ function* addedPartySaga() {
 }
 
 function* fetchPersonListSaga() {
-  const page = yield select(state => state.account.personPage);
-  const pageSize = yield select(state => state.account.personPageSize);
-  const sortedBy = yield select(state => state.account.personSortedBy);
-  const sortOrder = yield select(state => state.account.personSortOrder);
+  const config = yield select(state => state.account.personTable);
 
-  const query = `page=${page}&pageSize=${pageSize}&sortedBy=${sortedBy}&sortOrder=${sortOrder}`;
-  yield put(apiGet(`/api/account/view-person?${query}`, GOT_PERSON_LIST));
+  yield put(
+    apiGet(urlWithParams("/api/account/view-person", config), GOT_PERSON_LIST)
+  );
 }
 
 function* fetchCustomerListSaga() {
-  const page = yield select(state => state.account.customerPage);
-  const pageSize = yield select(state => state.account.customerPageSize);
-  const sortedBy = yield select(state => state.account.customerSortedBy);
-  const sortOrder = yield select(state => state.account.customerSortOrder);
+  const config = yield select(state => state.account.customerTable);
 
-  const query = `page=${page}&pageSize=${pageSize}&sortedBy=${sortedBy}&sortOrder=${sortOrder}`;
-  yield put(apiGet(`/api/account/view-customer?${query}`, GOT_CUSTOMER_LIST));
+  yield put(
+    apiGet(
+      urlWithParams("/api/account/view-customer", config),
+      GOT_CUSTOMER_LIST
+    )
+  );
 }
 
 function* updatedPersonSaga() {

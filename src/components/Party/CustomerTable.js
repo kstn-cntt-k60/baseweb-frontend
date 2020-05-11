@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import { customerConfigTable, fetchCustomerList } from "../../actions/account";
+import { configCustomerTable, fetchCustomerList } from "../../actions/account";
 
 import {
   Paper,
@@ -20,13 +20,34 @@ import { formatTime } from "../../util";
 
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
+import SearchIcon from "@material-ui/icons/Search";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   tableHead: {
     fontWeight: "bold"
   },
   iconButton: {
     cursor: "pointer"
+  },
+  search: ({ focus }) => ({
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    border: "solid",
+    borderWidth: "1px",
+    borderColor: focus ? "blue" : "#aaa",
+    boxShadow: focus ? "0 0 10px 0 blue" : "none",
+    marginTop: theme.spacing(1),
+    width: 500,
+    borderRadius: "15px",
+    padding: "0px 10px"
+  }),
+  searchInput: {
+    outline: "none",
+    width: "100%",
+    border: "none",
+    height: "35px",
+    fontSize: theme.typography.htmlFontSize
   }
 }));
 
@@ -35,39 +56,61 @@ const switchSortOrder = order => (order === "desc" ? "asc" : "desc");
 const CustomerTable = ({
   entries,
   count,
-  page,
-  pageSize,
-  sortedBy,
-  sortOrder,
+  config,
   fetchCustomer,
   configTable,
   onEdit,
   onDelete
 }) => {
-  const classes = useStyles();
+  const [text, setText] = useState(config.searchText);
+  const [focus, setFocus] = useState(false);
+
+  const classes = useStyles({ focus });
 
   useEffect(() => {
     fetchCustomer();
-  }, [page, pageSize, sortedBy, sortOrder]);
+  }, [config]);
 
   const onPageChange = (_, newPage) => {
-    configTable(newPage, pageSize, sortedBy, sortOrder);
+    configTable({ page: newPage });
   };
 
   const onPageSizeChange = e => {
-    configTable(page, e.target.value, sortedBy, sortOrder);
+    configTable({ pageSize: e.target.value });
   };
 
   const onSortChange = name => {
-    if (name === sortedBy) {
-      configTable(page, pageSize, sortedBy, switchSortOrder(sortOrder));
+    if (name === config.sortedBy) {
+      configTable({ sortOrder: switchSortOrder(config.sortOrder) });
     } else {
-      configTable(page, pageSize, name, sortOrder);
+      configTable({ sortedBy: name });
     }
   };
 
+  const onSubmit = e => {
+    e.preventDefault();
+    configTable({ searchText: text });
+  };
+
+  const sortedBy = config.sortedBy;
+  const sortOrder = config.sortOrder;
+
   return (
     <Paper>
+      <form onSubmit={onSubmit}>
+        <div className={classes.search}>
+          <SearchIcon />
+          <input
+            className={classes.searchInput}
+            placeholder="Search Person ..."
+            type="text"
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onFocus={() => setFocus(true)}
+            onBlur={() => setFocus(false)}
+          />
+        </div>
+      </form>
       <TableContainer>
         <Table>
           <TableHead>
@@ -132,8 +175,8 @@ const CustomerTable = ({
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={count}
-        rowsPerPage={pageSize}
-        page={page}
+        rowsPerPage={config.pageSize}
+        page={config.page}
         onChangePage={onPageChange}
         onChangeRowsPerPage={onPageSizeChange}
       />
@@ -145,19 +188,8 @@ const mapState = createSelector(
   state => state.account.customerMap,
   state => state.account.customerIdList,
   state => state.account.customerCount,
-  state => state.account.customerPage,
-  state => state.account.customerPageSize,
-  state => state.account.customerSortedBy,
-  state => state.account.customerSortOrder,
-  (
-    customerMap,
-    customerIdList,
-    count,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder
-  ) => ({
+  state => state.account.customerTable,
+  (customerMap, customerIdList, count, config) => ({
     entries: customerIdList
       .map(id => customerMap[id])
       .map(c => ({
@@ -166,17 +198,13 @@ const mapState = createSelector(
         updatedAt: formatTime(c.updatedAt)
       })),
     count,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder
+    config
   })
 );
 
 const mapDispatch = dispatch => ({
   fetchCustomer: () => dispatch(fetchCustomerList()),
-  configTable: (page, pageSize, sortedBy, sortOrder) =>
-    dispatch(customerConfigTable(page, pageSize, sortedBy, sortOrder))
+  configTable: config => dispatch(configCustomerTable(config))
 });
 
 export default connect(mapState, mapDispatch)(CustomerTable);

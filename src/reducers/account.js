@@ -1,8 +1,8 @@
 import {
   GOT_PERSON_LIST,
-  PERSON_CONFIG_TABLE,
+  CONFIG_PERSON_TABLE,
   GOT_CUSTOMER_LIST,
-  CUSTOMER_CONFIG_TABLE,
+  CONFIG_CUSTOMER_TABLE,
   GOT_SEARCH_PERSON,
   RESET_SEARCH_PERSON,
   GOT_USER_LOGIN_LIST,
@@ -16,18 +16,24 @@ const initialState = {
   personCount: 0,
   personMap: {},
   personIdList: [],
-  personPage: 0,
-  personPageSize: 5,
-  personSortedBy: "createdAt",
-  personSortOrder: "desc",
+  personTable: {
+    page: 0,
+    pageSize: 5,
+    sortedBy: "createdAt",
+    sortOrder: "desc",
+    searchText: ""
+  },
 
   customerCount: 0,
   customerMap: {},
   customerIdList: [],
-  customerPage: 0,
-  customerPageSize: 5,
-  customerSortedBy: "createdAt",
-  customerSortOrder: "desc",
+  customerTable: {
+    page: 0,
+    pageSize: 5,
+    sortedBy: "createdAt",
+    sortOrder: "desc",
+    searchText: ""
+  },
 
   searchPerson: [],
 
@@ -53,13 +59,13 @@ const account = (state = initialState, action) => {
         personIdList: action.body.personList.map(p => p.id)
       };
 
-    case PERSON_CONFIG_TABLE:
+    case CONFIG_PERSON_TABLE:
       return {
         ...state,
-        personPage: action.page,
-        personPageSize: action.pageSize,
-        personSortedBy: action.sortedBy,
-        personSortOrder: action.sortOrder
+        personTable: {
+          ...state.personTable,
+          ...action.config
+        }
       };
 
     case GOT_CUSTOMER_LIST:
@@ -70,13 +76,13 @@ const account = (state = initialState, action) => {
         customerIdList: action.body.customerList.map(p => p.id)
       };
 
-    case CUSTOMER_CONFIG_TABLE:
+    case CONFIG_CUSTOMER_TABLE:
       return {
         ...state,
-        customerPage: action.page,
-        customerPageSize: action.pageSize,
-        customerSortedBy: action.sortedBy,
-        customerSortOrder: action.sortOrder
+        customerTable: {
+          ...state.customerTable,
+          ...action.config
+        }
       };
 
     case GOT_SEARCH_PERSON:
