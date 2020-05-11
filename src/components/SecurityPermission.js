@@ -15,14 +15,15 @@ import {
   ListItem,
   Checkbox
 } from "@material-ui/core";
+import AddSecurityGroupDialog from "./SecurityGroup/AddDialog";
+
 import {
-  apiGet,
-  apiPost,
-  openAddSecurityGroupDialog,
   GOT_ALL_GROUPS_AND_PERMISSIONS,
   SAVED_GROUP_PERMISSIONS
-} from "../actions";
-import { setDifference } from "../util";
+} from "../actions/security";
+import { apiGet, apiPost } from "../actions";
+
+import { setDifference, formatTime } from "../util";
 import AddIcon from "@material-ui/icons/Add";
 
 const TabPanel = props => {
@@ -84,12 +85,9 @@ const PermissionTab = ({
   const canNotSave =
     permissionIdSet.size === storePermissionIdSet.size &&
     [...permissionIdSet].every(value => storePermissionIdSet.has(value));
-  const createdAt = new Date(group.createdAt);
   return (
     <React.Fragment>
-      {`Created at: ${createdAt.toLocaleTimeString(
-        "en-US"
-      )} ${createdAt.toLocaleDateString("vi")}`}
+      {`Created at: ${formatTime(group.createdAt)}`}
       <List>
         {securityPermissions.map(perm => (
           <ListItem key={perm.id}>
@@ -128,10 +126,11 @@ const SecurityPermission = ({
   securityPermissions,
   mapOfGroupIdToPermissionIdSet,
   getAllGroupsAndPermissions,
-  saveGroupPermissions,
-  openAddGroup
+  saveGroupPermissions
 }) => {
   const classes = useStyles();
+
+  const [openAdd, setOpenAdd] = useState(false);
 
   const [value, setValue] = useState(0);
   const [mapPermissions, setMapPermissions] = useState(
@@ -146,7 +145,7 @@ const SecurityPermission = ({
     getAllGroupsAndPermissions();
   }, []);
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (_, newValue) => {
     setValue(newValue);
   };
 
@@ -180,7 +179,11 @@ const SecurityPermission = ({
     <React.Fragment>
       <Divider />
       <div className={classes.header}>
-        <Fab className={classes.add} onClick={openAddGroup} color="secondary">
+        <Fab
+          className={classes.add}
+          onClick={() => setOpenAdd(true)}
+          color="secondary"
+        >
           <AddIcon />
         </Fab>
         <Typography className={classes.title} variant="h5">
@@ -220,6 +223,10 @@ const SecurityPermission = ({
           </TabPanel>
         ))}
       </div>
+      <AddSecurityGroupDialog
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+      />
     </React.Fragment>
   );
 };
@@ -263,8 +270,7 @@ const mapDispatch = dispatch => ({
         },
         SAVED_GROUP_PERMISSIONS
       )
-    ),
-  openAddGroup: () => dispatch(openAddSecurityGroupDialog())
+    )
 });
 
 export default connect(mapState, mapDispatch)(SecurityPermission);

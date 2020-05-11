@@ -7,7 +7,6 @@ import {
   DialogActions,
   TextField,
   Button,
-  CircularProgress,
   makeStyles
 } from "@material-ui/core";
 import { connect } from "react-redux";
@@ -18,26 +17,26 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-import { closeAddSecurityGroupDialog, addSecurityGroup } from "../actions";
-import { GROUP_LOADING, GROUP_FAILED } from "../reducers/security";
+import { apiPost } from "../../actions";
+import { ADDED_SECURITY_GROUP } from "../../actions/security";
 
-const AddSecurityGroupDialog = ({
-  open,
-  loading,
-  failed,
-  onClose,
-  addGroup
-}) => {
+const AddDialog = ({ open, onClose, addGroup }) => {
   const classes = useStyles();
   const [name, setName] = useState("");
 
-  const handleOnClose = () => {
+  const onCancel = () => {
     setName("");
+  };
+
+  const onAdd = () => {
+    addGroup(name);
     onClose();
   };
 
+  const disabled = name === "";
+
   return (
-    <Dialog open={open} onClose={handleOnClose}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle className={classes.dialog}>Add Security Group</DialogTitle>
       <DialogContent>
         <TextField
@@ -51,14 +50,17 @@ const AddSecurityGroupDialog = ({
         />
       </DialogContent>
       <DialogActions>
-        {failed ? <h3>Failed</h3> : ""}
-        {loading ? <CircularProgress /> : ""}
-        <Button onClick={onClose} variant="contained" color="secondary">
+        <Button
+          disabled={disabled}
+          onClick={onCancel}
+          variant="contained"
+          color="secondary"
+        >
           Cancel
         </Button>
         <Button
-          disabled={name === ""}
-          onClick={() => addGroup(name)}
+          disabled={disabled}
+          onClick={onAdd}
           variant="contained"
           color="primary"
         >
@@ -69,15 +71,17 @@ const AddSecurityGroupDialog = ({
   );
 };
 
-const mapState = state => ({
-  open: state.security.openAddSecurityGroupDialog,
-  loading: state.security.addSecurityGroupState === GROUP_LOADING,
-  failed: state.security.addSecurityGroupState === GROUP_FAILED
-});
+const mapState = () => ({});
 
 const mapDispatch = dispatch => ({
-  onClose: () => dispatch(closeAddSecurityGroupDialog()),
-  addGroup: name => dispatch(addSecurityGroup(name))
+  addGroup: name =>
+    dispatch(
+      apiPost(
+        "/api/security/add-security-group",
+        { name },
+        ADDED_SECURITY_GROUP
+      )
+    )
 });
 
-export default connect(mapState, mapDispatch)(AddSecurityGroupDialog);
+export default connect(mapState, mapDispatch)(AddDialog);

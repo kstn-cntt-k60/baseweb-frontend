@@ -117,8 +117,13 @@ const NavBar = ({ open, handleNavBarClose }) => {
           url="order"
           subItems={[
             {
-              text: "View & Edit",
-              url: "view-edit",
+              text: "Add Order",
+              url: "add",
+              permission: "VIEW_EDIT_ORDER"
+            },
+            {
+              text: "View Orders",
+              url: "view",
               permission: "VIEW_EDIT_ORDER"
             }
           ]}
@@ -134,6 +139,11 @@ const NavBar = ({ open, handleNavBarClose }) => {
               text: "View & Edit",
               url: "view-edit",
               permission: "VIEW_EDIT_PRODUCT"
+            },
+            {
+              text: "Pricing",
+              url: "pricing",
+              permission: "VIEW_EDIT_PRODUCT"
             }
           ]}
         />
@@ -145,8 +155,13 @@ const NavBar = ({ open, handleNavBarClose }) => {
           url="facility"
           subItems={[
             {
-              text: "View & Edit",
-              url: "view-edit",
+              text: "Warehouse",
+              url: "warehouse",
+              permission: "VIEW_EDIT_FACILITY"
+            },
+            {
+              text: "Customer Store",
+              url: "customer-store",
               permission: "VIEW_EDIT_FACILITY"
             }
           ]}

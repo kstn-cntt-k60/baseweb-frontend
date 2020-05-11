@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { STATE_LOGGED_IN } from "../reducers/auth";
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, useLocation } from "react-router-dom";
 import { loginPreviousUrl } from "../actions";
 
-const CustomRoute = ({ state, path, children, changeUrl }) => {
+const CustomRoute = ({ state, children, changeUrl }) => {
+  const location = useLocation();
+
   useEffect(() => {
-    changeUrl(path);
-  }, [path]);
+    changeUrl(location.pathname);
+  }, [location]);
 
   return (
     <React.Fragment>
@@ -18,7 +20,7 @@ const CustomRoute = ({ state, path, children, changeUrl }) => {
 
 const PrivateRoute = ({ state, path, children, changeUrl }) => (
   <Route path={path}>
-    <CustomRoute state={state} path={path} changeUrl={changeUrl}>
+    <CustomRoute state={state} changeUrl={changeUrl}>
       {children}
     </CustomRoute>
   </Route>

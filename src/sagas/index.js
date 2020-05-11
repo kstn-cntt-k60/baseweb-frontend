@@ -9,16 +9,18 @@ import {
   logoutAction,
   removeNotification,
   PUSH_NOTIFICATION,
-  pushErrorNotification,
-  pushSuccessNotification,
-  SAVED_GROUP_PERMISSIONS,
-  ADD_SECURITY_GROUP,
-  apiPost,
-  ADDED_SECURITY_GROUP,
-  ADD_SECURITY_GROUP_FAILED,
-  closeAddSecurityGroupDialog
+  pushErrorNotification
 } from "../actions";
+
 import { apiLogin } from "./api";
+
+import securitySaga from "./security";
+import accountSaga from "./account";
+import productSaga from "./product";
+import facilitySaga from "./facility";
+import importSaga from "./import";
+import orderSaga from "./order";
+import exportSaga from "./export";
 
 function* loginSaga(action) {
   const response = yield call(apiLogin, action.username, action.password);
@@ -30,7 +32,8 @@ function* loginSaga(action) {
     const body = yield call(() => response.json());
     yield put(loginSuceeded(token, body.userLogin, body.securityPermissions));
   } else {
-    console.log("SERVER PROBLEM!!!");
+    const sequence = yield select(state => state.notifications.sequence);
+    yield put(pushErrorNotification(sequence, "Login failed!!!"));
   }
 }
 
@@ -77,7 +80,6 @@ function* apiRequestSaga(action) {
     const json = yield call(() => response.json());
     yield put({ type: action.actionType, body: json });
   } else {
-    console.log(action.errorActionType);
     if (action.errorActionType) {
       yield put({ type: action.errorActionType, status: response.status });
     } else {
@@ -94,33 +96,6 @@ function* pushNotificationSaga(action) {
   yield put(removeNotification(action.id));
 }
 
-function* savedSecurityGroupPermissionsSaga() {
-  const sequence = yield select(state => state.notifications.sequence);
-  yield put(pushSuccessNotification(sequence, "Saved sucessfully"));
-}
-
-function* addSecurityGroupSaga(action) {
-  yield put(
-    apiPost(
-      "/api/security/add-security-group",
-      { name: action.name },
-      ADDED_SECURITY_GROUP,
-      ADD_SECURITY_GROUP_FAILED
-    )
-  );
-}
-
-function* addedSecurityGroupSaga() {
-  const sequence = yield select(state => state.notifications.sequence);
-  yield put(pushSuccessNotification(sequence, "Added sucessfully"));
-  yield put(closeAddSecurityGroupDialog());
-}
-
-function* addSecurityGroupFailedSaga() {
-  const sequence = yield select(state => state.notifications.sequence);
-  yield put(pushErrorNotification(sequence, "Add failed!!!"));
-}
-
 function* rootSaga() {
   yield takeEvery(LOGIN, loginSaga);
   yield takeEvery(LOGIN_SUCEEDED, loginSuceededSaga);
@@ -128,11 +103,13 @@ function* rootSaga() {
   yield takeEvery(API_REQUEST, apiRequestSaga);
   yield takeEvery(PUSH_NOTIFICATION, pushNotificationSaga);
 
-  yield takeEvery(SAVED_GROUP_PERMISSIONS, savedSecurityGroupPermissionsSaga);
-
-  yield takeEvery(ADD_SECURITY_GROUP, addSecurityGroupSaga);
-  yield takeEvery(ADDED_SECURITY_GROUP, addedSecurityGroupSaga);
-  yield takeEvery(ADD_SECURITY_GROUP_FAILED, addSecurityGroupFailedSaga);
+  yield* securitySaga();
+  yield* accountSaga();
+  yield* productSaga();
+  yield* orderSaga();
+  yield* facilitySaga();
+  yield* importSaga();
+  yield* exportSaga();
 }
 
 export default rootSaga;
