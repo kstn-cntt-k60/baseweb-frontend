@@ -3,11 +3,6 @@ import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
 import {
-  productConfigTable,
-  fetchProductListAction
-} from "../../actions/product";
-
-import {
   Paper,
   TableContainer,
   Table,
@@ -19,11 +14,16 @@ import {
   TablePagination,
   makeStyles
 } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
 import SearchIcon from "@material-ui/icons/Search";
 
-import { formatTime } from "../../util";
+import {
+  fetchPlanningList,
+  configPlanningTable
+} from "../../actions/salesroute";
+import { formatTime, formatDate, zeroPad } from "../../util";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 
 const useStyles = makeStyles(theme => ({
   tableHead: {
@@ -31,6 +31,12 @@ const useStyles = makeStyles(theme => ({
   },
   iconButton: {
     cursor: "pointer"
+  },
+  row: {
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "#ddd"
+    }
   },
   search: ({ focus }) => ({
     display: "flex",
@@ -56,48 +62,54 @@ const useStyles = makeStyles(theme => ({
 
 const switchSortOrder = order => (order === "desc" ? "asc" : "desc");
 
-const ProductTable = ({
+const PlanningTable = ({
   entries,
-  productCount,
-  page,
-  pageSize,
-  sortedBy,
-  sortOrder,
-  searchText,
+  planningCount,
+  config,
+  fetchPlanningList,
+  configTable,
+  onSelect,
   onEdit,
-  onDelete,
-  fetchProductList,
-  configTable
+  onDelete
 }) => {
-  const [text, setText] = useState(searchText);
+  const [text, setText] = useState(config.searchText);
   const [focus, setFocus] = useState(false);
 
   const classes = useStyles({ focus });
 
   useEffect(() => {
-    fetchProductList();
-  }, [page, pageSize, sortedBy, sortOrder, searchText]);
+    fetchPlanningList();
+  }, [config]);
 
   const onPageChange = (_, newPage) => {
-    configTable(newPage, pageSize, sortedBy, sortOrder, text);
+    configTable({ page: newPage });
   };
 
   const onPageSizeChange = e => {
-    configTable(page, e.target.value, sortedBy, sortOrder, text);
+    configTable({
+      pageSize: e.target.value
+    });
   };
 
   const onSortChange = name => {
-    if (name === sortedBy) {
-      configTable(page, pageSize, sortedBy, switchSortOrder(sortOrder), text);
+    if (name === config.sortedBy) {
+      configTable({ sortOrder: switchSortOrder(config.sortOrder) });
     } else {
-      configTable(page, pageSize, name, sortOrder, text);
+      configTable({ sortedBy: name });
     }
   };
 
   const onSubmit = e => {
     e.preventDefault();
-    configTable(page, pageSize, sortedBy, sortOrder, text);
+    configTable({ searchText: text });
   };
+
+  const onClickRow = id => {
+    onSelect(id);
+  };
+
+  const sortedBy = config.sortedBy;
+  const sortOrder = config.sortOrder;
 
   return (
     <Paper>
@@ -106,7 +118,7 @@ const ProductTable = ({
           <SearchIcon />
           <input
             className={classes.searchInput}
-            placeholder="Search Product ..."
+            placeholder="Search Planning Period ..."
             type="text"
             value={text}
             onChange={e => setText(e.target.value)}
@@ -119,17 +131,9 @@ const ProductTable = ({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={text === "" && sortedBy === "name"}
-                  onClick={() => onSortChange("name")}
-                  direction={sortOrder}
-                >
-                  Product Name
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>Weight</TableCell>
-              <TableCell className={classes.tableHead}>Unit</TableCell>
+              <TableCell className={classes.tableHead}>Planning Code</TableCell>
+              <TableCell className={classes.tableHead}>From Date</TableCell>
+              <TableCell className={classes.tableHead}>Thru Date</TableCell>
               <TableCell className={classes.tableHead}>Created By</TableCell>
               <TableCell className={classes.tableHead}>
                 <TableSortLabel
@@ -149,7 +153,7 @@ const ProductTable = ({
                   Updated At
                 </TableSortLabel>
               </TableCell>
-              <TableCell className={classes.tableHead}>Description</TableCell>
+              <TableCell className={classes.tableHead}></TableCell>
               <TableCell className={classes.tableHead}></TableCell>
               <TableCell className={classes.tableHead}></TableCell>
             </TableRow>
@@ -157,23 +161,30 @@ const ProductTable = ({
           <TableBody>
             {entries.map(e => (
               <TableRow key={e.id}>
-                <TableCell>{e.name}</TableCell>
-                <TableCell>{e.weight}</TableCell>
-                <TableCell>{e.unitUomId}</TableCell>
+                <TableCell>{e.displayId}</TableCell>
+                <TableCell>{e.fromDate}</TableCell>
+                <TableCell>{e.thruDate}</TableCell>
                 <TableCell>{e.createdBy}</TableCell>
                 <TableCell>{e.createdAt}</TableCell>
                 <TableCell>{e.updatedAt}</TableCell>
-                <TableCell>{e.description}</TableCell>
                 <TableCell>
                   <EditIcon
                     className={classes.iconButton}
-                    onClick={onEdit(e.id)}
+                    onClick={() => onEdit(e.id)}
+                    color="secondary"
                   />
                 </TableCell>
                 <TableCell>
                   <DeleteIcon
                     className={classes.iconButton}
                     onClick={() => onDelete(e.id)}
+                    color="primary"
+                  />
+                </TableCell>
+                <TableCell>
+                  <MoreVertIcon
+                    className={classes.iconButton}
+                    onClick={() => onClickRow(e.id)}
                   />
                 </TableCell>
               </TableRow>
@@ -184,9 +195,9 @@ const ProductTable = ({
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={productCount}
-        rowsPerPage={pageSize}
-        page={page}
+        count={planningCount}
+        rowsPerPage={config.pageSize}
+        page={config.page}
         onChangePage={onPageChange}
         onChangeRowsPerPage={onPageSizeChange}
       />
@@ -195,47 +206,29 @@ const ProductTable = ({
 };
 
 const mapState = createSelector(
-  state => state.product.productMap,
-  state => state.product.productIdList,
-  state => state.product.productCount,
-  state => state.product.productPage,
-  state => state.product.productPageSize,
-  state => state.product.productSortedBy,
-  state => state.product.productSortOrder,
-  state => state.product.productSearchText,
-  (
-    productMap,
-    productIdList,
-    productCount,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder,
-    searchText
-  ) => ({
-    entries: productIdList
-      .map(id => productMap[id])
-      .map(p => ({
-        ...p,
-        weight: p.weight === null ? "" : `${p.weight}${p.weightUomId}`,
-        createdAt: formatTime(p.createdAt),
-        updatedAt: formatTime(p.updatedAt)
+  state => state.salesroute.planningMap,
+  state => state.salesroute.planningIdList,
+  state => state.salesroute.planningCount,
+  state => state.salesroute.planningTable,
+  (planningMap, planningIdList, planningCount, config) => ({
+    config,
+    entries: planningIdList
+      .map(id => planningMap[id])
+      .map(w => ({
+        ...w,
+        displayId: zeroPad(w.id, 5),
+        fromDate: formatDate(w.fromDate),
+        thruDate: formatDate(w.thruDate),
+        createdAt: formatTime(w.createdAt),
+        updatedAt: formatTime(w.updatedAt)
       })),
-    productCount,
-    page,
-    pageSize,
-    sortedBy,
-    sortOrder,
-    searchText
+    planningCount
   })
 );
 
 const mapDispatch = dispatch => ({
-  fetchProductList: () => dispatch(fetchProductListAction()),
-  configTable: (page, pageSize, sortedBy, sortOrder, searchText = "") =>
-    dispatch(
-      productConfigTable(page, pageSize, sortedBy, sortOrder, searchText)
-    )
+  fetchPlanningList: () => dispatch(fetchPlanningList()),
+  configTable: config => dispatch(configPlanningTable(config))
 });
 
-export default connect(mapState, mapDispatch)(ProductTable);
+export default connect(mapState, mapDispatch)(PlanningTable);

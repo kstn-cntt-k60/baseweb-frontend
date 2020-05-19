@@ -21,6 +21,16 @@ import ViewOrders from "./components/Order/ViewOrders";
 import ViewOrder from "./components/Order/ViewOrder";
 import Export from "./components/Export";
 import ExportOrderItem from "./components/Export/OrderItem";
+import Salesman from "./components/SalesRoute/Salesman/Salesman";
+import SalesRoute from "./components/SalesRoute";
+import PlanningPeriodDetail from "./components/SalesRoute/PlanningPeriodDetail";
+import ConfigIndex from "./components/SalesRoute/ConfigIndex";
+import Schedule from "./components/SalesRoute/Schedule";
+import ScheduleInfoIndex from "./components/SalesRoute/Schedule/ScheduleInfoIndex";
+import ScheduleInfo from "./components/SalesRoute/Schedule/ScheduleInfo";
+import AddSalesman from "./components/SalesRoute/Salesman/AddSalesman";
+import SalesmanChecking from "./components/SalesRoute/Salesman/SalesmanChecking";
+import ScheduleIndex from "./components/SalesRoute/Salesman/ScheduleIndex";
 
 const App = () => (
   <React.Fragment>
@@ -129,6 +139,66 @@ const App = () => (
         <PrivateRoute path="/import-export/export-order-item/:orderId">
           <MainLayout>
             <ExportOrderItem />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/salesman">
+          <MainLayout>
+            <Salesman />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/config">
+          <MainLayout>
+            <ConfigIndex />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/planning">
+          <MainLayout>
+            <SalesRoute />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/planning-period-detail/:id">
+          <MainLayout>
+            <PlanningPeriodDetail />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/schedule">
+          <MainLayout>
+            <Schedule />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/view-schedules">
+          <MainLayout>
+            <ScheduleInfoIndex />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/add-salesman">
+          <MainLayout>
+            <AddSalesman />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/schedule/schedule-detail/:id">
+          <MainLayout>
+            <ScheduleInfo />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/salesman/schedule">
+          <MainLayout>
+            <ScheduleIndex />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/salesman/checkin">
+          <MainLayout>
+            <SalesmanChecking />
           </MainLayout>
         </PrivateRoute>
 

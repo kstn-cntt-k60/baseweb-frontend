@@ -14,7 +14,7 @@ const Product = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteProductId, setDeleteProductId] = useState(null);
 
-  const onEdit = id => {
+  const onEdit = id => () => {
     setEditProductId(id);
     setOpenEdit(true);
   };

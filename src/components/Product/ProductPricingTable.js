@@ -71,6 +71,7 @@ const ProductPricingTable = ({
   const [focus, setFocus] = useState(false);
 
   const classes = useStyles({ focus });
+  console.log(entries);
 
   useEffect(() => {
     fetchPricingList();

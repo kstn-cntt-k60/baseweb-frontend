@@ -16,6 +16,8 @@ import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
 import StoreIcon from "@material-ui/icons/Store";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
+import TransferWithinAStationIcon from "@material-ui/icons/TransferWithinAStation";
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 
 import NavMenu from "./NavMenu";
 
@@ -182,6 +184,58 @@ const NavBar = ({ open, handleNavBarClose }) => {
               text: "Export",
               url: "export",
               permission: "EXPORT"
+            }
+          ]}
+        />
+
+        <NavMenu
+          classes={classes}
+          icon={<TransferWithinAStationIcon />}
+          text="Sales Route"
+          url="sales-route"
+          subItems={[
+            {
+              text: "Salesman",
+              url: "salesman",
+              permission: "VIEW_EDIT_SALESMAN"
+            },
+            {
+              text: "Config",
+              url: "config",
+              permission: "VIEW_EDIT_SALESMAN"
+            },
+            {
+              text: "Planning",
+              url: "planning",
+              permission: "VIEW_EDIT_SALESMAN"
+            },
+            {
+              text: "Schedule",
+              url: "schedule",
+              permission: "VIEW_EDIT_SALESMAN"
+            },
+            {
+              text: "View Schedules",
+              url: "view-schedules",
+              permission: "VIEW_EDIT_SALESMAN"
+            }
+          ]}
+        />
+        <NavMenu
+          classes={classes}
+          icon={<AssignmentIndIcon />}
+          text="Salesman"
+          url="salesman"
+          subItems={[
+            {
+              text: "Schedule",
+              url: "schedule",
+              permission: "SALESMAN_CHECKIN"
+            },
+            {
+              text: "Checkin",
+              url: "checkin",
+              permission: "SALESMAN_CHECKIN"
             }
           ]}
         />

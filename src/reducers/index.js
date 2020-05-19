@@ -8,6 +8,9 @@ import facility from "./facility";
 import importReducer from "./import";
 import order from "./order";
 import exportReducer from "./export";
+import salesroute from "./salesroute";
+import schedule from "./schedule";
+import salesman from "./salesman";
 
 export default combineReducers({
   auth,
@@ -18,5 +21,8 @@ export default combineReducers({
   product,
   facility,
   import: importReducer,
-  export: exportReducer
+  export: exportReducer,
+  salesroute,
+  schedule,
+  salesman
 });
