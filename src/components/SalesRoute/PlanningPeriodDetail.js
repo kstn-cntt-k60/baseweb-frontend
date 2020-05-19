@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import React from "react";
+import { useParams } from "react-router-dom";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 import { formatTime, formatDate, zeroPad } from "../../util";
@@ -8,9 +8,6 @@ import { apiGet } from "../../actions";
 import { makeStyles } from "@material-ui/core";
 
 import { Paper } from "@material-ui/core";
-// import ProductTable from "./ProductTable";
-// import InventoryItemTable from "./InventoryItemTable";
-// import AddInventoryItemDialog from "./AddInventoryItemDialog";
 import { GOT_PLANNING } from "../../actions/salesroute";
 
 const useStyles = makeStyles(theme => ({
@@ -25,19 +22,11 @@ const PlanningPeriodDetail = ({ getPlanning, apiGetPlanning }) => {
   const classes = useStyles();
 
   const { id } = useParams();
-  //   const history = useHistory();
-
-  //   const [productId, setProductId] = useState(null);
-  //   const [openAdd, setOpenAdd] = useState(false);
 
   const planningPeriod = getPlanning(parseInt(id));
   if (planningPeriod === null) {
     apiGetPlanning(id);
   }
-
-  //   const onMoreInfo = productId => {
-  //     history.push(`/import-export/import-warehouse-product/${id}/${productId}`);
-  //   };
 
   return (
     <div>
@@ -53,20 +42,6 @@ const PlanningPeriodDetail = ({ getPlanning, apiGetPlanning }) => {
       ) : (
         <Paper></Paper>
       )}
-
-      {/* <ProductTable
-        warehouseId={id}
-        onAddItem={onAddItem}
-        onMoreInfo={onMoreInfo}
-      />
-      <InventoryItemTable warehouseId={id} />
-
-      <AddInventoryItemDialog
-        open={openAdd}
-        warehouseId={id}
-        productId={productId}
-        onClose={() => setOpenAdd(false)}
-      /> */}
     </div>
   );
 };

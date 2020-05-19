@@ -16,6 +16,10 @@ export const GOT_CONFIG_LIST = "GOT_CONFIG_LIST";
 export const CONFIG_CONFIG_TABLE = "CONFIG_CONFIG_TABLE";
 export const GOT_CONFIG = "GOT_CONFIG";
 
+export const ADDED_CONFIG = "ADDED_CONFIG";
+export const UPDATED_CONFIG = "UPDATED_CONFIG";
+export const DELETED_CONFIG = "DELETED_CONFIG";
+
 export const fetchSalesmanList = () => ({
   type: FETCH_SALESMAN_LIST
 });

@@ -12,15 +12,33 @@ import {
   TableBody,
   TableSortLabel,
   TablePagination,
-  makeStyles
+  makeStyles,
+  withStyles
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 
 import { fetchConfigList, configConfigTable } from "../../actions/salesroute";
-import { formatTime, formatDate, zeroPad } from "../../util";
+import { formatTime, zeroPad } from "../../util";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+
+const StyledTableRow = withStyles(theme => ({
+  root: {
+    "&:nth-of-type(odd)": {
+      backgroundColor: theme.palette.action.hover
+    }
+  }
+}))(TableRow);
+
+const StyledTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: theme.palette.info.light,
+    color: theme.palette.common.white
+  },
+  body: {
+    fontSize: 14
+  }
+}))(TableCell);
 
 const useStyles = makeStyles(theme => ({
   tableHead: {
@@ -64,10 +82,9 @@ const ConfigTable = ({
   configCount,
   config,
   fetchConfigList,
-  configTable
-  //   onSelect,
-  //   onEdit,
-  //   onDelete
+  configTable,
+  onEdit,
+  onDelete
 }) => {
   const [text, setText] = useState(config.searchText);
   const [focus, setFocus] = useState(false);
@@ -101,10 +118,6 @@ const ConfigTable = ({
     configTable({ searchText: text });
   };
 
-  const onClickRow = id => {
-    onSelect(id);
-  };
-
   const sortedBy = config.sortedBy;
   const sortOrder = config.sortOrder;
 
@@ -128,7 +141,7 @@ const ConfigTable = ({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableHead}>
+              <StyledTableCell className={classes.tableHead}>
                 <TableSortLabel
                   active={text === "" && sortedBy === "name"}
                   onClick={() => onSortChange("name")}
@@ -136,11 +149,17 @@ const ConfigTable = ({
                 >
                   Sales Route Config Code
                 </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>Repeat Week</TableCell>
-              <TableCell className={classes.tableHead}>Day</TableCell>
-              <TableCell className={classes.tableHead}>Created By</TableCell>
-              <TableCell className={classes.tableHead}>
+              </StyledTableCell>
+              <StyledTableCell className={classes.tableHead}>
+                Repeat Week
+              </StyledTableCell>
+              <StyledTableCell className={classes.tableHead}>
+                Day
+              </StyledTableCell>
+              <StyledTableCell className={classes.tableHead}>
+                Created By
+              </StyledTableCell>
+              <StyledTableCell className={classes.tableHead}>
                 <TableSortLabel
                   active={text === "" && sortedBy === "createdAt"}
                   onClick={() => onSortChange("createdAt")}
@@ -148,8 +167,8 @@ const ConfigTable = ({
                 >
                   Created At
                 </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>
+              </StyledTableCell>
+              <StyledTableCell className={classes.tableHead}>
                 <TableSortLabel
                   active={text === "" && sortedBy === "updatedAt"}
                   onClick={() => onSortChange("updatedAt")}
@@ -157,71 +176,36 @@ const ConfigTable = ({
                 >
                   Updated At
                 </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}></TableCell>
-              <TableCell className={classes.tableHead}></TableCell>
-              <TableCell className={classes.tableHead}></TableCell>
+              </StyledTableCell>
+              <StyledTableCell className={classes.tableHead}></StyledTableCell>
+              <StyledTableCell className={classes.tableHead}></StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* {entries.map(e => (
-              <TableRow key={e.id}>
-                <TableCell>{e.displayId}</TableCell>
-                <TableCell>{e.fromDate}</TableCell>
-                <TableCell>{e.thruDate}</TableCell>
-                <TableCell>{e.createdBy}</TableCell>
-                <TableCell>{e.createdAt}</TableCell>
-                <TableCell>{e.updatedAt}</TableCell>
-                <TableCell>
+            {entries.map(e => (
+              <StyledTableRow key={e.id}>
+                <StyledTableCell>{e.displayId}</StyledTableCell>
+                <StyledTableCell>{e.repeatWeek}</StyledTableCell>
+                <StyledTableCell>{e.dayList}</StyledTableCell>
+                <StyledTableCell>{e.createdBy}</StyledTableCell>
+                <StyledTableCell>{e.createdAt}</StyledTableCell>
+                <StyledTableCell>{e.updatedAt}</StyledTableCell>
+                <StyledTableCell>
                   <EditIcon
                     className={classes.iconButton}
                     onClick={() => onEdit(e.id)}
                     color="secondary"
                   />
-                </TableCell>
-                <TableCell>
+                </StyledTableCell>
+                <StyledTableCell>
                   <DeleteIcon
                     className={classes.iconButton}
                     onClick={() => onDelete(e.id)}
                     color="primary"
                   />
-                </TableCell>
-                <TableCell>
-                  <MoreVertIcon
-                    className={classes.iconButton}
-                    onClick={() => onClickRow(e.id)}
-                  />
-                </TableCell>
-              </TableRow>
-            ))} */}
-            <TableRow>
-              <TableCell>displayId</TableCell>
-              <TableCell>.fromDate</TableCell>
-              <TableCell>thruDate</TableCell>
-              <TableCell>createdB</TableCell>
-              <TableCell>createdAt</TableCell>
-              <TableCell>updatedAt</TableCell>
-              <TableCell>
-                <EditIcon
-                  className={classes.iconButton}
-                  onClick={() => onEdit(e.id)}
-                  color="secondary"
-                />
-              </TableCell>
-              <TableCell>
-                <DeleteIcon
-                  className={classes.iconButton}
-                  onClick={() => onDelete(e.id)}
-                  color="primary"
-                />
-              </TableCell>
-              <TableCell>
-                <MoreVertIcon
-                  className={classes.iconButton}
-                  onClick={() => onClickRow(e.id)}
-                />
-              </TableCell>
-            </TableRow>
+                </StyledTableCell>
+              </StyledTableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -245,15 +229,14 @@ const mapState = createSelector(
   state => state.salesroute.configTable,
   (configMap, configIdList, configCount, config) => ({
     config,
-    entries: configIdList.map(id => configMap[id]),
-    //   .map(w => ({
-    //     ...w,
-    //     displayId: zeroPad(w.id, 5),
-    //     fromDate: formatDate(w.fromDate),
-    //     thruDate: formatDate(w.thruDate),
-    //     createdAt: formatTime(w.createdAt),
-    //     updatedAt: formatTime(w.updatedAt)
-    //   })),
+    entries: configIdList
+      .map(id => configMap[id])
+      .map(w => ({
+        ...w,
+        displayId: zeroPad(w.id, 5),
+        createdAt: formatTime(w.createdAt),
+        updatedAt: formatTime(w.updatedAt)
+      })),
     configCount
   })
 );

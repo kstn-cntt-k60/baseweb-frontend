@@ -33,22 +33,6 @@ const useStyles = makeStyles(theme => ({
   },
   select: {
     margin: theme.spacing(1)
-  },
-  weight: {
-    margin: theme.spacing(1),
-    display: "flex",
-    alignItems: "flex-end"
-  },
-  weightInput: {
-    width: "200px",
-    marginBottom: theme.spacing(1)
-  },
-  weightUom: {
-    marginBottom: theme.spacing(1)
-  },
-  unitUom: {
-    margin: theme.spacing(1),
-    width: 200
   }
 }));
 

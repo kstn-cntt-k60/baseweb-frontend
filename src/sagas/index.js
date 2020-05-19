@@ -22,6 +22,8 @@ import importSaga from "./import";
 import orderSaga from "./order";
 import exportSaga from "./export";
 import salesRouteSaga from "./salesroute";
+import scheduleSaga from "./schedule";
+import salesmanSaga from "./salesman";
 
 function* loginSaga(action) {
   const response = yield call(apiLogin, action.username, action.password);
@@ -112,6 +114,8 @@ function* rootSaga() {
   yield* importSaga();
   yield* exportSaga();
   yield* salesRouteSaga();
+  yield* scheduleSaga();
+  yield* salesmanSaga();
 }
 
 export default rootSaga;

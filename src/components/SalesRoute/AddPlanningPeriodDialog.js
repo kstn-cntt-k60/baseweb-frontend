@@ -35,12 +35,12 @@ const useStyles = makeStyles(theme => ({
 const AddPlanningPeriodDialog = ({ open, onClose, savePlanningPeriod }) => {
   const classes = useStyles();
 
-  const [fromDate, setFromDate] = useState("2020-01-01T00:00:00.000Z");
-  const [thruDate, setThruDate] = useState("2022-01-01T00:00:00.000Z");
+  const [fromDate, setFromDate] = useState(new Date());
+  const [thruDate, setThruDate] = useState(new Date());
 
   const onCancel = () => {
-    setFromDate("2020-01-01T00:00:00.000Z");
-    setThruDate("2022-01-01T00:00:00.000Z");
+    setFromDate(new Date());
+    setThruDate(new Date());
   };
 
   console.log(fromDate);

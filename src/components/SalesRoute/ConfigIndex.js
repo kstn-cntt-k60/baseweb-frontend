@@ -1,33 +1,27 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import ConfigTable from "./ConfigTable";
 import { Button } from "@material-ui/core";
-// import AddPlanningPeriodDialog from "./AddPlanningPeriodDialog";
-// import EditPlanningPeriodDialog from "./EditPlanningPeriodDialog";
-// import DeletePlanningPeriodDialog from "./DeletePlanningPeriodDialog";
+import AddConfigDialog from "./AddConfigDialog";
+import EditConfigDialog from "./EditConfigDialog";
+import DeleteConfigDialog from "./DeleteConfigDialog";
 
 const SalesRoute = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  const [editPlanningPeriodId, setEditPlanningPeriodId] = useState(null);
+  const [editConfigId, setEditConfigId] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);
-  const [deletePlanningPeriodId, setDeletePlanningPeriodId] = useState(null);
+  const [deleteConfigId, setDeleteConfigId] = useState(null);
 
   const onEdit = id => {
-    setEditPlanningPeriodId(id);
+    setEditConfigId(id);
     setOpenEdit(true);
   };
 
   const onDelete = id => {
-    setDeletePlanningPeriodId(id);
+    setDeleteConfigId(id);
     setOpenDelete(true);
   };
 
-  const history = useHistory();
-
-  //   const onSelectPlanningPeriod = id => {
-  //     history.push(`/sales-route/planning-period-detail/${id}`);
-  //   };
   return (
     <div>
       <Button
@@ -38,28 +32,21 @@ const SalesRoute = () => {
         Add Sales Route Config
       </Button>
 
-      <ConfigTable
-        // onSelect={onSelectPlanningPeriod}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />
+      <ConfigTable onEdit={onEdit} onDelete={onDelete} />
 
-      {/* <AddPlanningPeriodDialog
-        open={openAdd}
-        onClose={() => setOpenAdd(false)}
-      />
+      <AddConfigDialog open={openAdd} onClose={() => setOpenAdd(false)} />
 
-      <EditPlanningPeriodDialog
+      <EditConfigDialog
         open={openEdit}
-        planningPeriodId={editPlanningPeriodId}
+        configId={editConfigId}
         onClose={() => setOpenEdit(false)}
       />
 
-      <DeletePlanningPeriodDialog
+      <DeleteConfigDialog
         open={openDelete}
-        planningPeriodId={deletePlanningPeriodId}
+        configId={deleteConfigId}
         onClose={() => setOpenDelete(false)}
-      /> */}
+      />
     </div>
   );
 };
