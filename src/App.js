@@ -31,6 +31,8 @@ import ScheduleInfo from "./components/SalesRoute/Schedule/ScheduleInfo";
 import AddSalesman from "./components/SalesRoute/Salesman/AddSalesman";
 import SalesmanChecking from "./components/SalesRoute/Salesman/SalesmanChecking";
 import ScheduleIndex from "./components/SalesRoute/Salesman/ScheduleIndex";
+import AddCustomerStore from "./components/Facility/AddCustomerStore";
+import GoogleMapCustom from "./components/GoogleMapCustom";
 
 const App = () => (
   <React.Fragment>
@@ -97,6 +99,12 @@ const App = () => (
         <PrivateRoute path="/product/pricing">
           <MainLayout>
             <ProductPricing />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/facility/add-facility">
+          <MainLayout>
+            <AddCustomerStore />
           </MainLayout>
         </PrivateRoute>
 
