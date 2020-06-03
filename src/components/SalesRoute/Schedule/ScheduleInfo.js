@@ -58,14 +58,22 @@ const ScheduleInfo = ({ getSchedule, apiGetSchedule }) => {
           <Paper className={classes.paper}>
             <div className={classes.info}>
               <div className={classes.title}>
-                Customer: {schedule.customerName}
+                Salesman: {schedule.salesmanName}
               </div>
             </div>
           </Paper>
           <Paper className={classes.paper}>
             <div className={classes.info}>
               <div className={classes.title}>
-                Salesman: {schedule.salesmanName}
+                Store Name: {schedule.storeName}
+              </div>
+              <div className={classes.more}>Address: {schedule.address}</div>
+            </div>
+          </Paper>
+          <Paper className={classes.paper}>
+            <div className={classes.info}>
+              <div className={classes.title}>
+                Customer: {schedule.customerName}
               </div>
             </div>
           </Paper>

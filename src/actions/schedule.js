@@ -23,6 +23,13 @@ export const FETCH_SCHEDULE_LIST = "schedule/FETCH_SCHEDULE_LIST";
 export const GOT_SCHEDULE_LIST = "schedule/GOT_SCHEDULE_LIST";
 export const GOT_SCHEDULE = "schedule/GOT_SCHEDULE";
 
+export const FETCH_STORE_LIST = "schedule/FETCH_STORE_LIST";
+export const CONFIG_STORE_TABLE = "schedule/CONFIG_STORE_TABLE";
+export const GOT_STORE_LIST = "schedule/GOT_STORE_LIST";
+
+export const FETCH_CLUSTERING = "schedule/FETCH_CLUSTERING";
+export const GOT_CLUSTERING_LIST = "schedule/GOT_CLUSTERING_LIST";
+
 export const fetchSalesmanList = () => ({
   type: FETCH_SALESMAN_LIST
 });
@@ -66,4 +73,17 @@ export const configScheduleTable = config => ({
 
 export const fetchScheduleList = () => ({
   type: FETCH_SCHEDULE_LIST
+});
+
+export const configStoreTable = config => ({
+  type: CONFIG_STORE_TABLE,
+  config
+});
+
+export const fetchStoreList = () => ({
+  type: FETCH_STORE_LIST
+});
+
+export const fetchClustering = () => ({
+  type: FETCH_CLUSTERING
 });

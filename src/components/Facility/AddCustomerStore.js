@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import {
   Button,
@@ -19,6 +20,7 @@ import {
 } from "../../actions/facility";
 
 import SearchIcon from "@material-ui/icons/Search";
+import GoogleMapCustom from "../GoogleMapCustom";
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -70,6 +72,9 @@ const useStyles = makeStyles(theme => ({
   },
   none: {
     color: "red"
+  },
+  button: {
+    marginBottom: "10px"
   }
 }));
 
@@ -89,12 +94,15 @@ const AddCustomerStore = ({
   searchCustomer
 }) => {
   const [name, setName] = useState("");
-  const [addr, setAddr] = useState("");
+  const [addr, setAddr] = useState("Ha Noi, Viet Nam");
   const [focus, setFocus] = useState(false);
   const [query, setQuery] = useState("");
   const [chosenCustomer, setChosenCustomer] = useState(null);
-  const [sequence, setSequence] = useState(0);
+  const [sequence, setSequence] = useState(customerListSequence);
+  const [openMap, setOpenMap] = useState(false);
+  const [coordinates, setCoordinates] = useState(null);
 
+  const history = useHistory();
   const classes = useStyles({ focus });
 
   const onCancel = () => {
@@ -108,8 +116,11 @@ const AddCustomerStore = ({
     saveCustomerStore({
       name,
       address: addr,
+      latitude: coordinates.lat,
+      longitude: coordinates.lng,
       customerId: chosenCustomer.id
     });
+    history.push("/facility/customer-store");
   };
 
   const onSearch = e => {
@@ -175,16 +186,45 @@ const AddCustomerStore = ({
           <List>
             {sequence < customerListSequence
               ? customerList.map(customer => (
-                <SearchItem
-                  key={customer.id}
-                  classes={classes}
-                  customer={customer}
-                  onSelectCustomer={onSelectCustomer}
-                />
-              ))
+                  <SearchItem
+                    key={customer.id}
+                    classes={classes}
+                    customer={customer}
+                    onSelectCustomer={onSelectCustomer}
+                  />
+                ))
               : null}
           </List>
         </form>
+      </div>
+      <div>
+        {openMap ? (
+          <Button
+            className={classes.button}
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenMap(!openMap)}
+          >
+            Close Google Map
+          </Button>
+        ) : (
+          <Button
+            className={classes.button}
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenMap(!openMap)}
+          >
+            Open Google Map
+          </Button>
+        )}
+
+        {openMap ? (
+          <GoogleMapCustom
+            setAddr={setAddr}
+            setCoordinates={setCoordinates}
+            setOpenMap={setOpenMap}
+          />
+        ) : null}
       </div>
       <DialogActions>
         <Button

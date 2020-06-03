@@ -1,18 +1,22 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import { Button } from "@material-ui/core";
 
 import CustomerStoreTable from "./CustomerStoreTable";
-import AddCustomerStoreDialog from "./AddCustomerStoreDialog";
 import EditCustomerStoreDialog from "./EditCustomerStoreDialog";
 import DeleteCustomerStoreDialog from "./DeleteCustomerStoreDialog";
 
 const CustomerStore = () => {
-  const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editId, setEditId] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const history = useHistory();
+
+  const onClickAdd = () => {
+    history.push("/facility/add-facility");
+  };
 
   const onEdit = id => {
     setEditId(id);
@@ -26,20 +30,11 @@ const CustomerStore = () => {
 
   return (
     <div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenAdd(true)}
-      >
+      <Button variant="contained" color="primary" onClick={onClickAdd}>
         Add Customer Store
       </Button>
 
       <CustomerStoreTable onEdit={onEdit} onDelete={onDelete} />
-
-      <AddCustomerStoreDialog
-        open={openAdd}
-        onClose={() => setOpenAdd(false)}
-      />
 
       <EditCustomerStoreDialog
         storeId={editId}
