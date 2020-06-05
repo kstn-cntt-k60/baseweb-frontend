@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import {
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
   FormControl,
   TextField,
@@ -22,6 +20,7 @@ import {
 } from "../../actions/facility";
 
 import SearchIcon from "@material-ui/icons/Search";
+import GoogleMapCustom from "../GoogleMapCustom";
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -73,6 +72,9 @@ const useStyles = makeStyles(theme => ({
   },
   none: {
     color: "red"
+  },
+  button: {
+    marginBottom: "10px"
   }
 }));
 
@@ -85,34 +87,40 @@ const SearchItem = ({ customer, classes, onSelectCustomer }) => (
   </ListItem>
 );
 
-const AddCustomerStoreDialog = ({
-  open,
-  onClose,
+const AddCustomerStore = ({
   customerList,
+  customerListSequence,
   saveCustomerStore,
   searchCustomer
 }) => {
   const [name, setName] = useState("");
-  const [addr, setAddr] = useState("");
+  const [addr, setAddr] = useState("Ha Noi, Viet Nam");
   const [focus, setFocus] = useState(false);
   const [query, setQuery] = useState("");
   const [chosenCustomer, setChosenCustomer] = useState(null);
+  const [sequence, setSequence] = useState(customerListSequence);
+  const [openMap, setOpenMap] = useState(false);
+  const [coordinates, setCoordinates] = useState(null);
 
+  const history = useHistory();
   const classes = useStyles({ focus });
 
   const onCancel = () => {
     setName("");
     setAddr("");
     setChosenCustomer(null);
+    setSequence(sequence + 1);
   };
 
   const onSave = () => {
     saveCustomerStore({
       name,
       address: addr,
+      latitude: coordinates.lat,
+      longitude: coordinates.lng,
       customerId: chosenCustomer.id
     });
-    onClose();
+    history.push("/facility/customer-store");
   };
 
   const onSearch = e => {
@@ -122,72 +130,102 @@ const AddCustomerStoreDialog = ({
 
   const onSelectCustomer = customer => {
     setChosenCustomer(customer);
+    setSequence(sequence + 1);
   };
 
   const cancelDisabled = name === "" && addr === "" && chosenCustomer === null;
   const saveDisabled = name === "" || addr === "" || chosenCustomer === null;
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add Customer Store</DialogTitle>
-      <DialogContent>
-        <div className={classes.content}>
-          <FormControl className={classes.textField}>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Store Name"
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              fullWidth
-            />
-          </FormControl>
-          <FormControl className={classes.textField}>
-            <TextField
-              margin="dense"
-              label="Address"
-              type="text"
-              value={addr}
-              onChange={e => setAddr(e.target.value)}
-              fullWidth
-            />
-          </FormControl>
-          <div>
-            {chosenCustomer ? (
-              <div className={classes.chosen}>{chosenCustomer.name}</div>
-            ) : (
-              <Typography variant="subtitle1">
-                Customer: <span className={classes.none}>None</span>
-              </Typography>
-            )}
-          </div>
-          <form onSubmit={onSearch}>
-            <div className={classes.search}>
-              <SearchIcon />
-              <input
-                className={classes.searchInput}
-                placeholder="Search Customer ..."
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                onFocus={() => setFocus(true)}
-                onBlur={() => setFocus(false)}
-              />
-            </div>
-            <List>
-              {customerList.map(customer => (
-                <SearchItem
-                  key={customer.id}
-                  classes={classes}
-                  customer={customer}
-                  onSelectCustomer={onSelectCustomer}
-                />
-              ))}
-            </List>
-          </form>
+    <div>
+      <div className={classes.content}>
+        <FormControl className={classes.textField}>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Store Name"
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            fullWidth
+          />
+        </FormControl>
+        <FormControl className={classes.textField}>
+          <TextField
+            margin="dense"
+            label="Address"
+            type="text"
+            value={addr}
+            onChange={e => setAddr(e.target.value)}
+            fullWidth
+          />
+        </FormControl>
+
+        <div>
+          {chosenCustomer ? (
+            <div className={classes.chosen}>{chosenCustomer.name}</div>
+          ) : (
+            <Typography variant="subtitle1">
+              Customer: <span className={classes.none}>None</span>
+            </Typography>
+          )}
         </div>
-      </DialogContent>
+        <form onSubmit={onSearch}>
+          <div className={classes.search}>
+            <SearchIcon />
+            <input
+              className={classes.searchInput}
+              placeholder="Search Customer ..."
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onFocus={() => setFocus(true)}
+              onBlur={() => setFocus(false)}
+            />
+          </div>
+          <List>
+            {sequence < customerListSequence
+              ? customerList.map(customer => (
+                  <SearchItem
+                    key={customer.id}
+                    classes={classes}
+                    customer={customer}
+                    onSelectCustomer={onSelectCustomer}
+                  />
+                ))
+              : null}
+          </List>
+        </form>
+      </div>
+      <div>
+        {openMap ? (
+          <Button
+            className={classes.button}
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenMap(!openMap)}
+          >
+            Close Google Map
+          </Button>
+        ) : (
+          <Button
+            className={classes.button}
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenMap(!openMap)}
+          >
+            Open Google Map
+          </Button>
+        )}
+
+        {openMap ? (
+          <GoogleMapCustom
+            setAddr={setAddr}
+            setCoordinates={setCoordinates}
+            setOpenMap={setOpenMap}
+          />
+        ) : null}
+      </div>
       <DialogActions>
         <Button
           onClick={onCancel}
@@ -206,12 +244,13 @@ const AddCustomerStoreDialog = ({
           Save
         </Button>
       </DialogActions>
-    </Dialog>
+    </div>
   );
 };
 
 const mapState = state => ({
-  customerList: state.facility.customerList
+  customerList: state.facility.customerList,
+  customerListSequence: state.facility.customerListSequence
 });
 
 const mapDispatch = dispatch => ({
@@ -230,4 +269,4 @@ const mapDispatch = dispatch => ({
     )
 });
 
-export default connect(mapState, mapDispatch)(AddCustomerStoreDialog);
+export default connect(mapState, mapDispatch)(AddCustomerStore);

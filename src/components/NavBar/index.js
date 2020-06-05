@@ -157,6 +157,11 @@ const NavBar = ({ open, handleNavBarClose }) => {
           url="facility"
           subItems={[
             {
+              text: "Add Facility",
+              url: "add-facility",
+              permission: "VIEW_EDIT_FACILITY"
+            },
+            {
               text: "Warehouse",
               url: "warehouse",
               permission: "VIEW_EDIT_FACILITY"

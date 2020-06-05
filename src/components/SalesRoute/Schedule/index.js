@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 
 import SelectPlanning from "./SelectPlanning";
-import SelectCustomer from "./SelectCustomer";
 import SelectSalesman from "./SelectSalesman";
-import SelectConfig from "./SelectConfig";
 import FinalStep from "./FinalStep";
+import SelectCustomerStore from "./SelectCustomerStore";
 
 import {
   Paper,
@@ -21,9 +20,8 @@ import { apiPost } from "../../../actions";
 
 const steps = [
   "Select Planning",
-  "Select Customer",
   "Select Salesman",
-  "Select Config"
+  "Select Customer Store && Config"
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -37,12 +35,10 @@ const ScheduleStep = ({
   step,
   planning,
   onSelectPlanning,
-  customer,
-  onSelectCustomer,
+  stores,
+  onSelectStores,
   salesman,
   onSelectSalesman,
-  config,
-  onSelectConfig,
   onCancel,
   onAdd
 }) => {
@@ -57,32 +53,23 @@ const ScheduleStep = ({
 
     case 1:
       return (
-        <SelectCustomer
-          selectedCustomer={customer}
-          onSelectCustomer={onSelectCustomer}
-        />
-      );
-
-    case 2:
-      return (
         <SelectSalesman
           selectedSalesman={salesman}
           onSelectSalesman={onSelectSalesman}
         />
       );
 
-    case 3:
+    case 2:
       return (
-        <SelectConfig selectedConfig={config} onSelectConfig={onSelectConfig} />
+        <SelectCustomerStore stores={stores} onSelectStores={onSelectStores} />
       );
 
-    case 4:
+    case 3:
       return (
         <FinalStep
           planning={planning}
-          customer={customer}
+          stores={stores}
           salesman={salesman}
-          config={config}
           onCancel={onCancel}
           onAdd={onAdd}
         />
@@ -93,19 +80,16 @@ const ScheduleStep = ({
   }
 };
 
-const allowNext = (step, planning, customer, salesman, config) => {
+const allowNext = (step, planning, stores, salesman) => {
   switch (step) {
     case 0:
       return planning !== null;
 
     case 1:
-      return customer !== null;
-
-    case 2:
       return salesman !== null;
 
-    case 3:
-      return config !== null;
+    case 2:
+      return stores !== null;
 
     default:
       return true;
@@ -117,46 +101,61 @@ const Schedule = ({ addSchedule }) => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [planning, setPlanning] = useState(null);
-  const [customer, setCustomer] = useState(null);
+  const [stores, setStores] = useState({});
   const [salesman, setSalesman] = useState(null);
-  const [config, setConfig] = useState(null);
 
   const next = () => setActiveStep(activeStep + 1);
 
   const onSelectPlanning = planning => {
     setPlanning(planning);
+    setStores({});
     next();
   };
 
-  const onSelectCustomer = customer => {
-    setCustomer(customer);
-    next();
+  const onSelectStores = (currentStore, config) => {
+    if (
+      stores[currentStore.id] &&
+      stores[currentStore.id].config.id === config.id
+    ) {
+      setStores({
+        ...stores,
+        [currentStore.id]: undefined
+      });
+    } else {
+      setStores({
+        ...stores,
+        [currentStore.id]: { ...currentStore, config: config }
+      });
+    }
   };
 
   const onSelectSalesman = salesman => {
     setSalesman(salesman);
-    next();
-  };
-
-  const onSelectConfig = config => {
-    setConfig(config);
+    setStores({});
     next();
   };
 
   const onCancel = () => {
     setActiveStep(0);
     setPlanning(null);
-    setCustomer(null);
+    setStores({});
     setSalesman(null);
-    setConfig(null);
   };
+
+  console.log(stores);
+
+  const customerStore = Object.values(stores).map(store => ({
+    customerStoreId: store.id,
+    configId: store.config.id
+  }));
+
+  console.log(customerStore);
 
   const onAdd = () => {
     addSchedule({
       planningId: planning.id,
-      customerId: customer.id,
-      salesmanId: salesman.id,
-      configId: config.id
+      customerStores: customerStore,
+      salesmanId: salesman.id
     });
   };
 
@@ -166,12 +165,10 @@ const Schedule = ({ addSchedule }) => {
         step={activeStep}
         planning={planning}
         onSelectPlanning={onSelectPlanning}
-        customer={customer}
-        onSelectCustomer={onSelectCustomer}
+        stores={stores}
+        onSelectStores={onSelectStores}
         salesman={salesman}
         onSelectSalesman={onSelectSalesman}
-        config={config}
-        onSelectConfig={onSelectConfig}
         onCancel={onCancel}
         onAdd={onAdd}
       />
@@ -194,9 +191,7 @@ const Schedule = ({ addSchedule }) => {
         {activeStep < steps.length ? (
           <Button
             onClick={next}
-            disabled={
-              !allowNext(activeStep, planning, customer, salesman, config)
-            }
+            disabled={!allowNext(activeStep, planning, stores, salesman)}
             variant="contained"
             color="primary"
           >

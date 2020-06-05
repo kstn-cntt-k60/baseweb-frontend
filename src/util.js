@@ -95,3 +95,14 @@ export const normalizeDate = d => {
   const year = date.getFullYear();
   return new Date(Date.UTC(year, month, day));
 };
+
+export const formatDay = day => {
+  if (day === 0) return 8;
+  else return day + 1;
+};
+
+export const generate = n => {
+  const array = [];
+  for (let i = 0; i < n; i++) array.push(i);
+  return array;
+};

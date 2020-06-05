@@ -92,7 +92,7 @@ const SelectSalesman = ({
                   onClick={() => onSortChange("username")}
                   direction={sortOrder}
                 >
-                  Username
+                  Salesman Name
                 </TableSortLabel>
               </TableCell>
               <TableCell className={classes.tableHead}>Created By</TableCell>

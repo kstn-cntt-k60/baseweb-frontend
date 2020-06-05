@@ -74,6 +74,12 @@ const FinalStep = ({
       </Paper>
       <Paper className={classes.paper}>
         <div className={classes.info}>
+          <div className={classes.title}>Store Name: {detail.storeName}</div>
+          <div className={classes.more}>Address: {detail.address}</div>
+        </div>
+      </Paper>
+      <Paper className={classes.paper}>
+        <div className={classes.info}>
           <div className={classes.title}>
             To Customer: {detail.customerName}
           </div>

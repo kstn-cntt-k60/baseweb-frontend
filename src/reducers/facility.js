@@ -27,7 +27,8 @@ const initialState = {
   storeSortOrder: "desc",
   storeSearchText: "",
 
-  customerList: []
+  customerList: [],
+  customerListSequence: 0
 };
 
 const facility = (state = initialState, action) => {
@@ -71,7 +72,8 @@ const facility = (state = initialState, action) => {
     case GOT_SEARCH_CUSTOMER:
       return {
         ...state,
-        customerList: action.body
+        customerList: action.body,
+        customerListSequence: state.customerListSequence + 1
       };
 
     default:

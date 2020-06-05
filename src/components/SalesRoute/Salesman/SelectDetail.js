@@ -107,6 +107,8 @@ const SelectDetail = ({
                 </TableCell>
                 <TableCell className={classes.tableHead}>From Date</TableCell>
                 <TableCell className={classes.tableHead}>Thru Date</TableCell>
+                <TableCell className={classes.tableHead}>Store Name</TableCell>
+                <TableCell className={classes.tableHead}>Address</TableCell>
                 <TableCell className={classes.tableHead}>
                   Customer Name
                 </TableCell>
@@ -144,6 +146,8 @@ const SelectDetail = ({
                   <TableCell>{e.planningCode}</TableCell>
                   <TableCell>{e.fromDate}</TableCell>
                   <TableCell>{e.thruDate}</TableCell>
+                  <TableCell>{e.storeName}</TableCell>
+                  <TableCell>{e.address}</TableCell>
                   <TableCell>{e.customerName}</TableCell>
                   <TableCell>{e.configCode}</TableCell>
                   <TableCell>{e.repeatWeek}</TableCell>

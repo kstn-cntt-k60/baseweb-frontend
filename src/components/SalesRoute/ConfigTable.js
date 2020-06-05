@@ -18,7 +18,7 @@ import {
 import SearchIcon from "@material-ui/icons/Search";
 
 import { fetchConfigList, configConfigTable } from "../../actions/salesroute";
-import { formatTime, zeroPad } from "../../util";
+import { formatTime, zeroPad, formatDay } from "../../util";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 
@@ -222,6 +222,14 @@ const ConfigTable = ({
   );
 };
 
+const formatDayList = dayList =>
+  dayList
+    .split(", ")
+    .map(d => parseInt(d))
+    .map(d => formatDay(d))
+    .map(d => d.toString())
+    .join(", ");
+
 const mapState = createSelector(
   state => state.salesroute.configMap,
   state => state.salesroute.configIdList,
@@ -233,6 +241,7 @@ const mapState = createSelector(
       .map(id => configMap[id])
       .map(w => ({
         ...w,
+        dayList: formatDayList(w.dayList),
         displayId: zeroPad(w.id, 5),
         createdAt: formatTime(w.createdAt),
         updatedAt: formatTime(w.updatedAt)

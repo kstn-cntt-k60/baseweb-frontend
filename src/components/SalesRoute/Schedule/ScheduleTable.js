@@ -121,10 +121,16 @@ const ScheduleTable = ({
                   Thru Date
                 </StyledTableCell>
                 <StyledTableCell className={classes.tableHead}>
-                  Customer Name
+                  Salesman Name
                 </StyledTableCell>
                 <StyledTableCell className={classes.tableHead}>
-                  Salesman Name
+                  Store Name
+                </StyledTableCell>
+                <StyledTableCell className={classes.tableHead}>
+                  Address
+                </StyledTableCell>
+                <StyledTableCell className={classes.tableHead}>
+                  Customer Name
                 </StyledTableCell>
                 <StyledTableCell className={classes.tableHead}>
                   Config Code
@@ -167,8 +173,10 @@ const ScheduleTable = ({
                   <StyledTableCell>{e.planningCode}</StyledTableCell>
                   <StyledTableCell>{e.fromDate}</StyledTableCell>
                   <StyledTableCell>{e.thruDate}</StyledTableCell>
-                  <StyledTableCell>{e.customerName}</StyledTableCell>
                   <StyledTableCell>{e.salesmanName}</StyledTableCell>
+                  <StyledTableCell>{e.storeName}</StyledTableCell>
+                  <StyledTableCell>{e.address}</StyledTableCell>
+                  <StyledTableCell>{e.customerName}</StyledTableCell>
                   <StyledTableCell>{e.configCode}</StyledTableCell>
                   <StyledTableCell>{e.repeatWeek}</StyledTableCell>
                   <StyledTableCell>{e.dayList}</StyledTableCell>
@@ -178,7 +186,7 @@ const ScheduleTable = ({
                     <DeleteIcon
                       className={classes.iconButton}
                       onClick={() => onDelete(e.id)}
-                      color="primary"
+                      color="secondary"
                     />
                   </StyledTableCell>
                   <StyledTableCell>

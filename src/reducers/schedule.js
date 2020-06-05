@@ -11,10 +11,15 @@ import {
   ADD_SCHEDULE_FAILED,
   GOT_SCHEDULE_LIST,
   CONFIG_SCHEDULE_TABLE,
-  GOT_SCHEDULE
+  GOT_SCHEDULE,
+  CONFIG_STORE_TABLE,
+  GOT_STORE_LIST,
+  GOT_CLUSTERING_LIST
 } from "../actions/schedule";
 
 import { arrayToObjectWithId } from "../util";
+const INIT = "INIT";
+const LOADED = "LOADED";
 
 const initialState = {
   salesmanMap: {},
@@ -70,8 +75,34 @@ const initialState = {
     sortOrder: "desc"
   },
 
+  storeMap: {},
+  storeIdList: [],
+  storeCount: 0,
+  storeTable: {
+    page: 0,
+    pageSize: 5,
+    sortedBy: "createdAt",
+    sortOrder: "desc"
+  },
+
+  clusterMap: {},
+  clusteringState: INIT,
+  nClusterStore: 0,
+
   addedScheduleSequence: 0,
   addScheduleFailedSequence: 0
+};
+
+const neighborsToMap = neighbors => {
+  const result = {};
+  neighbors.forEach(nb => {
+    if (result[nb.index]) {
+      result[nb.index].push(nb);
+    } else {
+      result[nb.index] = [nb];
+    }
+  });
+  return result;
 };
 
 const schedule = (state = initialState, action) => {
@@ -168,6 +199,28 @@ const schedule = (state = initialState, action) => {
           ...state.scheduleMap,
           [action.body.id]: action.body
         }
+      };
+
+    case CONFIG_STORE_TABLE:
+      return {
+        ...state,
+        storeTable: { ...state.storeTable, ...action.config }
+      };
+
+    case GOT_STORE_LIST:
+      return {
+        ...state,
+        storeMap: arrayToObjectWithId(action.body.storeList),
+        storeIdList: action.body.storeList.map(s => s.id),
+        storeCount: action.body.storeCount
+      };
+
+    case GOT_CLUSTERING_LIST:
+      return {
+        ...state,
+        clusteringState: LOADED,
+        clusterMap: neighborsToMap(action.body),
+        nClusterStore: Object.keys(neighborsToMap(action.body)).length
       };
 
     default:

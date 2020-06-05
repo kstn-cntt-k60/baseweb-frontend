@@ -15,24 +15,22 @@ const useStyles = makeStyles(theme => ({
     color: "rgba(0, 0, 0, 0.54)",
     paddingLeft: theme.spacing(2)
   },
-  shipTo: {
-    ...theme.typography.subtitle1,
-    paddingLeft: theme.spacing(2)
-  },
   paper: {
     marginBottom: theme.spacing(1)
   },
   buttons: {
     display: "flex",
     justifyContent: "flex-end"
+  },
+  storePaper: {
+    margin: theme.spacing(1)
   }
 }));
 
 const FinalStep = ({
   planning,
-  customer,
+  stores,
   salesman,
-  config,
   onCancel,
   onAdd,
   addedScheduleSequence,
@@ -78,42 +76,47 @@ const FinalStep = ({
           <div className={classes.more}>Updated At: {planning.updatedAt}</div>
         </div>
       </Paper>
-      <Paper className={classes.paper}>
-        <div className={classes.info}>
-          <div className={classes.title}>To Customer: {customer.name}</div>
-          <div className={classes.more}>Created At: {customer.createdAt}</div>
-          <div className={classes.more}>Updated At: {customer.updatedAt}</div>
-          <div className={classes.more}>
-            Description: {customer.description}
-          </div>
-        </div>
-      </Paper>
+
       <Paper className={classes.paper}>
         <div className={classes.info}>
           <div className={classes.title}>Salesman: {salesman.username}</div>
           <div className={classes.more}>Created By: {salesman.createdBy}</div>
           <div className={classes.more}>Created At: {salesman.createdAt}</div>
           <div className={classes.more}>Updated At: {salesman.updatedAt}</div>
-          <div className={classes.more}>
-            Description: {customer.description}
-          </div>
         </div>
       </Paper>
 
       <Paper className={classes.paper}>
-        <div className={classes.info}>
-          <div className={classes.title}>
-            Sales Route Config: {config.displayId}
+        {Object.values(stores).map(store => (
+          <div
+            key={store.id}
+            style={{ padding: "10px", background: "#ffecb3" }}
+          >
+            <Paper className={classes.storePaper}>
+              <div className={classes.info}>
+                <div className={classes.title}>
+                  To Customer Store: {store.storeName}
+                </div>
+                <div className={classes.more}>Address: {store.address}</div>
+                <div className={classes.more}>
+                  Customer Name: {store.customerName}
+                </div>
+                <div className={classes.more}>
+                  Sales Route Config: {store.config.displayId}
+                </div>
+                <div className={classes.more}>
+                  Repeat Week: {store.config.repeatWeek}
+                </div>
+                <div className={classes.more}>
+                  Day List: {store.config.dayList}
+                </div>
+                <div className={classes.more}>
+                  Created By: {store.config.createdBy}
+                </div>
+              </div>
+            </Paper>
           </div>
-          <div className={classes.more}>Repeat Week: {config.repeatWeek}</div>
-          <div className={classes.more}>Day List: {config.dayList}</div>
-          <div className={classes.more}>Created By: {config.createdBy}</div>
-          <div className={classes.more}>Created At: {config.createdAt}</div>
-          <div className={classes.more}>Updated At: {config.updatedAt}</div>
-          <div className={classes.more}>
-            Description: {customer.description}
-          </div>
-        </div>
+        ))}
       </Paper>
 
       <div className={classes.buttons}>

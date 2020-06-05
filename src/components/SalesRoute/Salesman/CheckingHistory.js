@@ -121,6 +121,12 @@ const CheckingHistory = ({
                     Config Code
                   </StyledTableCell>
                   <StyledTableCell className={classes.tableHead}>
+                    Store Name
+                  </StyledTableCell>
+                  <StyledTableCell className={classes.tableHead}>
+                    Address
+                  </StyledTableCell>
+                  <StyledTableCell className={classes.tableHead}>
                     Customer Name
                   </StyledTableCell>
                   <StyledTableCell className={classes.tableHead}>
@@ -141,6 +147,8 @@ const CheckingHistory = ({
                     <StyledTableCell>{e.fromDate}</StyledTableCell>
                     <StyledTableCell>{e.thruDate}</StyledTableCell>
                     <StyledTableCell>{e.configCode}</StyledTableCell>
+                    <StyledTableCell>{e.storeName}</StyledTableCell>
+                    <StyledTableCell>{e.address}</StyledTableCell>
                     <StyledTableCell>{e.customerName}</StyledTableCell>
                     <StyledTableCell>{e.checkinTime}</StyledTableCell>
                   </StyledTableRow>
