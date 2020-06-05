@@ -55,6 +55,13 @@ const useStyles = makeStyles(theme => ({
     }),
     marginLeft: 0
   },
+  right: {
+    marginLeft: "auto",
+    textDecoration: "none"
+  },
+  loginButton: {
+    background: theme.palette.warning.light
+  },
   drawerHeader: drawerHeader(theme)
 }));
 
@@ -93,16 +100,22 @@ const MainLayout = ({ loginEnabled, children, onClickLogout }) => {
             DMS
           </Typography>
 
-          <Link to="/login">
+          <Link to="/login" className={classes.right}>
             {loginEnabled ? (
-              <Typography variant="h4" noWrap>
+              <Button
+                variant="contained"
+                color="secondary"
+                style={{ marginRight: "5px" }}
+              >
                 Login
-              </Typography>
+              </Button>
             ) : (
               ""
             )}
           </Link>
-          <Button onClick={onClickLogout}>Logout</Button>
+          <Button onClick={onClickLogout} variant="contained" color="inherit">
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
 
