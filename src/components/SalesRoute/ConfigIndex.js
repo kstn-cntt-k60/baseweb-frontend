@@ -28,6 +28,7 @@ const SalesRoute = () => {
         variant="contained"
         color="primary"
         onClick={() => setOpenAdd(true)}
+        style={{ marginBottom: "10px" }}
       >
         Add Sales Route Config
       </Button>

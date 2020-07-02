@@ -123,7 +123,7 @@ const SelectSalesman = ({
                 className={rowClass(e.id)}
                 onClick={() => onSelectSalesman(e)}
               >
-                <TableCell>{e.username}</TableCell>
+                <TableCell>{e.salesmanName}</TableCell>
                 <TableCell>{e.createdBy}</TableCell>
                 <TableCell>{e.createdAt}</TableCell>
                 <TableCell>{e.updatedAt}</TableCell>

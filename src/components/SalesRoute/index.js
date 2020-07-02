@@ -34,6 +34,7 @@ const SalesRoute = () => {
         variant="contained"
         color="primary"
         onClick={() => setOpenAdd(true)}
+        style={{ marginBottom: "10px" }}
       >
         Add Planning Period
       </Button>

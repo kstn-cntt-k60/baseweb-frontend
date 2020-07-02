@@ -123,7 +123,7 @@ const ConfigTable = ({
 
   return (
     <Paper>
-      <form onSubmit={onSubmit}>
+      {/* <form onSubmit={onSubmit}>
         <div className={classes.search}>
           <SearchIcon />
           <input
@@ -136,7 +136,7 @@ const ConfigTable = ({
             onBlur={() => setFocus(false)}
           />
         </div>
-      </form>
+      </form> */}
       <TableContainer>
         <Table>
           <TableHead>

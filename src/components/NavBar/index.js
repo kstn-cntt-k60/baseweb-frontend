@@ -46,7 +46,8 @@ const useStyles = makeStyles(
         paddingLeft: theme.spacing(4)
       },
       outerNavItemText: {
-        ...theme.typography.h6
+        ...theme.typography.h6,
+        fontWeight: "400 !important"
       },
       linkActive: {
         color: theme.palette.secondary.main
@@ -157,7 +158,7 @@ const NavBar = ({ open, handleNavBarClose }) => {
           url="facility"
           subItems={[
             {
-              text: "Add Facility",
+              text: "Add Customer Store",
               url: "add-facility",
               permission: "VIEW_EDIT_FACILITY"
             },
@@ -222,6 +223,11 @@ const NavBar = ({ open, handleNavBarClose }) => {
             {
               text: "View Schedules",
               url: "view-schedules",
+              permission: "VIEW_EDIT_SALESMAN"
+            },
+            {
+              text: "Assign Visualize",
+              url: "assign-visualize",
               permission: "VIEW_EDIT_SALESMAN"
             }
           ]}

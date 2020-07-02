@@ -11,44 +11,49 @@ const center = {
   lng: 105.843492
 };
 
-const GoogleMapDisplaySelectedStore = ({ selectedStoreMap, currentStore }) => {
+const GoogleMapStoreOfSalesman = ({ listStore }) => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyDl7WbBCp1OxwSDZWtTkdQluKYuj47qgdE",
     libraries
   });
   const mapRef = useRef();
+  const firstStore = Object.values(listStore)[0]
+    ? Object.values(listStore)[0]
+    : null;
 
   useEffect(() => {
-    if (mapRef.current) {
-      console.log("Use Effect Panto");
-      panTo({ lat: currentStore.lat, lng: currentStore.long });
+    if (mapRef.current && firstStore) {
+      panTo({ lat: firstStore.latitude, lng: firstStore.longitude });
     }
-  }, [currentStore]);
+  }, [listStore]);
 
   if (loadError) return "Error loading map";
   if (!isLoaded) return "Loading  Maps";
 
   const panTo = ({ lat, lng }) => {
     mapRef.current.panTo({ lat, lng });
-    mapRef.current.setZoom(12);
+    mapRef.current.setZoom(14);
   };
 
   const onMapLoad = map => {
     mapRef.current = map;
+    if (firstStore) {
+      panTo({ lat: firstStore.latitude, lng: firstStore.longitude });
+    }
   };
 
   return (
     <div>
       <GoogleMap
         mapContainerStyle={mapContainerStyles}
-        zoom={15}
+        zoom={13}
         center={center}
         onLoad={onMapLoad}
       >
-        {Object.values(selectedStoreMap).map(store => (
+        {Object.values(listStore).map(store => (
           <Marker
             key={store.id}
-            position={{ lat: store.lat, lng: store.long }}
+            position={{ lat: store.latitude, lng: store.longitude }}
           />
         ))}
       </GoogleMap>
@@ -56,4 +61,4 @@ const GoogleMapDisplaySelectedStore = ({ selectedStoreMap, currentStore }) => {
   );
 };
 
-export default GoogleMapDisplaySelectedStore;
+export default GoogleMapStoreOfSalesman;

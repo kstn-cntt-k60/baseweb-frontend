@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
+import GoogleMapStoreOfSalesman from "./GoogleMapStoreOfSalesman";
 
 import {
   fetchSalesmanList,
@@ -21,8 +22,14 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SearchIcon from "@material-ui/icons/Search";
+import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
 
 import { formatTime } from "../../../util";
+import { apiGet } from "../../../actions";
+import {
+  FIND_STORE_OF_SALESMAN,
+  FAILED_FIND_STORE_OF_SALESMAN
+} from "../../../actions/salesroute";
 
 const useStyles = makeStyles(theme => ({
   tableHead: {
@@ -61,10 +68,13 @@ const SalesmanTable = ({
   config,
   onDelete,
   fetchSalesman,
-  configTable
+  configTable,
+  findStore,
+  listStore
 }) => {
   const [text, setText] = useState(config.searchText);
   const [focus, setFocus] = useState(false);
+  const [selectedSalesmanId, setSelectedSalesmanId] = useState(null);
 
   const classes = useStyles({ focus });
 
@@ -96,86 +106,106 @@ const SalesmanTable = ({
     configTable({ searchText: text });
   };
 
+  const onClickFindStore = id => {
+    findStore(id);
+    setSelectedSalesmanId(id);
+  };
+
   return (
-    <Paper>
-      <form onSubmit={onSubmit}>
-        <div className={classes.search}>
-          <SearchIcon />
-          <input
-            className={classes.searchInput}
-            placeholder="Search Salesman ..."
-            type="text"
-            value={text}
-            onChange={e => setText(e.target.value)}
-            onFocus={() => setFocus(true)}
-            onBlur={() => setFocus(false)}
-          />
-        </div>
-      </form>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={text === "" && sortedBy === "username"}
-                  onClick={() => onSortChange("username")}
-                  direction={sortOrder}
-                >
-                  Username
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>Created By</TableCell>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={text === "" && sortedBy === "createdAt"}
-                  onClick={() => onSortChange("createdAt")}
-                  direction={sortOrder}
-                >
-                  Created At
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={text === "" && sortedBy === "updatedAt"}
-                  onClick={() => onSortChange("updatedAt")}
-                  direction={sortOrder}
-                >
-                  Updated At
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {entries.map(e => (
-              <TableRow key={e.id}>
-                <TableCell>{e.username}</TableCell>
-                <TableCell>{e.createdBy}</TableCell>
-                <TableCell>{e.createdAt}</TableCell>
-                <TableCell>{e.updatedAt}</TableCell>
-                <TableCell>
-                  <DeleteIcon
-                    className={classes.iconButton}
-                    onClick={() => onDelete(e.id)}
-                    color="secondary"
-                  />
+    <div>
+      <Paper>
+        <form onSubmit={onSubmit}>
+          <div className={classes.search}>
+            <SearchIcon />
+            <input
+              className={classes.searchInput}
+              placeholder="Search Salesman ..."
+              type="text"
+              value={text}
+              onChange={e => setText(e.target.value)}
+              onFocus={() => setFocus(true)}
+              onBlur={() => setFocus(false)}
+            />
+          </div>
+        </form>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.tableHead}>
+                  <TableSortLabel
+                    active={text === "" && sortedBy === "username"}
+                    onClick={() => onSortChange("username")}
+                    direction={sortOrder}
+                  >
+                    Salesman Name
+                  </TableSortLabel>
                 </TableCell>
+                <TableCell className={classes.tableHead}>Created By</TableCell>
+                <TableCell className={classes.tableHead}>
+                  <TableSortLabel
+                    active={text === "" && sortedBy === "createdAt"}
+                    onClick={() => onSortChange("createdAt")}
+                    direction={sortOrder}
+                  >
+                    Created At
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell className={classes.tableHead}>
+                  <TableSortLabel
+                    active={text === "" && sortedBy === "updatedAt"}
+                    onClick={() => onSortChange("updatedAt")}
+                    direction={sortOrder}
+                  >
+                    Updated At
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell className={classes.tableHead}></TableCell>
+                <TableCell className={classes.tableHead}></TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={salesmanCount}
-        rowsPerPage={config.pageSize}
-        page={config.page}
-        onChangePage={onPageChange}
-        onChangeRowsPerPage={onPageSizeChange}
-      />
-    </Paper>
+            </TableHead>
+            <TableBody>
+              {entries.map(e => (
+                <TableRow key={e.id}>
+                  <TableCell>{e.salesmanName}</TableCell>
+                  <TableCell>{e.createdBy}</TableCell>
+                  <TableCell>{e.createdAt}</TableCell>
+                  <TableCell>{e.updatedAt}</TableCell>
+                  <TableCell>
+                    <PersonPinCircleIcon
+                      color="primary"
+                      className={classes.iconButton}
+                      onClick={() => onClickFindStore(e.id)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <DeleteIcon
+                      className={classes.iconButton}
+                      onClick={() => onDelete(e.id)}
+                      color="secondary"
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={salesmanCount}
+          rowsPerPage={config.pageSize}
+          page={config.page}
+          onChangePage={onPageChange}
+          onChangeRowsPerPage={onPageSizeChange}
+        />
+      </Paper>
+      <div>
+        {selectedSalesmanId ? (
+          <GoogleMapStoreOfSalesman listStore={listStore} />
+        ) : null}
+      </div>
+    </div>
   );
 };
 
@@ -184,7 +214,8 @@ const mapState = createSelector(
   state => state.salesroute.salesmanIdList,
   state => state.salesroute.salesmanCount,
   state => state.salesroute.salesmanTable,
-  (salesmanMap, salesmanIdList, salesmanCount, config) => ({
+  state => state.salesroute.storeOfSalesman,
+  (salesmanMap, salesmanIdList, salesmanCount, config, listStore) => ({
     entries: salesmanIdList
       .map(id => salesmanMap[id])
       .map(p => ({
@@ -193,13 +224,22 @@ const mapState = createSelector(
         updatedAt: formatTime(p.updatedAt)
       })),
     salesmanCount,
-    config
+    config,
+    listStore
   })
 );
 
 const mapDispatch = dispatch => ({
   fetchSalesman: () => dispatch(fetchSalesmanList()),
-  configTable: config => dispatch(configSalesmanTable(config))
+  configTable: config => dispatch(configSalesmanTable(config)),
+  findStore: id =>
+    dispatch(
+      apiGet(
+        `/api/sales-route/get-store-of-salesman/${id}`,
+        FIND_STORE_OF_SALESMAN,
+        FAILED_FIND_STORE_OF_SALESMAN
+      )
+    )
 });
 
 export default connect(mapState, mapDispatch)(SalesmanTable);

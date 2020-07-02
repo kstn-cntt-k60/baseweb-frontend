@@ -14,7 +14,9 @@ import {
   GOT_SCHEDULE,
   CONFIG_STORE_TABLE,
   GOT_STORE_LIST,
-  GOT_CLUSTERING_LIST
+  GOT_CLUSTERING_LIST,
+  GOT_STORE_CITY,
+  SELECT_CITY
 } from "../actions/schedule";
 
 import { arrayToObjectWithId } from "../util";
@@ -85,9 +87,16 @@ const initialState = {
     sortOrder: "desc"
   },
 
+  storeFilterMap: {},
+  storeFilterIdList: [],
+
   clusterMap: {},
   clusteringState: INIT,
   nClusterStore: 0,
+  clusterArray: [],
+
+  selectedCity: "",
+  selectedStoreIds: null,
 
   addedScheduleSequence: 0,
   addScheduleFailedSequence: 0
@@ -220,7 +229,24 @@ const schedule = (state = initialState, action) => {
         ...state,
         clusteringState: LOADED,
         clusterMap: neighborsToMap(action.body),
-        nClusterStore: Object.keys(neighborsToMap(action.body)).length
+        nClusterStore: Object.keys(neighborsToMap(action.body)).length,
+        clusterArray: action.body
+      };
+
+    case GOT_STORE_CITY:
+      return {
+        ...state,
+        selectedStoreIds: action.body.storeIdList
+      };
+
+    case SELECT_CITY:
+      return {
+        ...state,
+        selectedCity: action.city,
+        selectedStoreIds: action.city === "" ? null : state.selectedStoreIds,
+        clusterMap: {},
+        nClusterStore: 0,
+        clusterArray: []
       };
 
     default:

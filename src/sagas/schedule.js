@@ -19,7 +19,10 @@ import {
   ADDED_SCHEDULE,
   FETCH_SCHEDULE_LIST,
   GOT_SCHEDULE_LIST,
-  DELETED_SCHEDULE
+  DELETED_SCHEDULE,
+  FETCH_STORE_CITY,
+  fetchStoreCity,
+  GOT_STORE_CITY
 } from "../actions/schedule";
 import { ADDED_CONFIG } from "../actions/salesroute";
 
