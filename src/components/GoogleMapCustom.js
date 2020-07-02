@@ -170,13 +170,6 @@ const Search = ({ panTo, setAddr }) => {
       );
     });
 
-  const displayData = data.map(d => ({
-    main: d.structured_formatting.main_text,
-    secondary: d.structured_formatting.secondary_text
-  }));
-
-  console.log("display data", displayData);
-
   return (
     <div>
       <div>

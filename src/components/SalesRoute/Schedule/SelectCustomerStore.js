@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
 import {
   configStoreTable,
   GOT_CLUSTERING_LIST,
-  GET_CLUSTERING_FAILED
+  GET_CLUSTERING_FAILED,
+  GOT_CLUSTERING_LIST_FILTER,
+  GET_CLUSTERING_FILTER_FAILED,
+  fetchStoreFilter
 } from "../../../actions/schedule";
 
 import {
@@ -21,18 +24,26 @@ import {
   InputAdornment,
   Button,
   Typography,
-  Box
+  Box,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem
 } from "@material-ui/core";
 import { generate } from "../../../util";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import RoomIcon from "@material-ui/icons/Room";
 import { apiGet } from "../../../actions";
-import GoogleMapDisplaySelectedStore from "./GoogleMapDisplaySelectedStore";
 import ChooseConfigDialog from "./ChooseConfigDialog";
+import GoogleMapVisualizeCluster from "./GoogleMapVisualizeCluster";
 
 const useStyles = makeStyles(theme => ({
   tableHead: {
     fontWeight: "bold"
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120
   },
   row: {
     cursor: "pointer",
@@ -68,16 +79,25 @@ const SelectCustomerStore = ({
   nClusterStore,
   onClickClustering,
   stores,
-  onSelectStores
+  onSelectStores,
+  onClusteringFilter,
+  fetchStoreFilter
 }) => {
   const classes = useStyles();
 
   const [nCluster, setNCluster] = useState(3);
+  const [city, setCity] = useState("");
   const [selectedClusterId, setSelectedClusterId] = useState(null);
   const [selectedStoreMap, setSelectedStoreMap] = useState({});
   const [currentStore, setCurrentStore] = useState(null);
 
   const [currentChosenStore, setCurrentChosenStore] = useState(null);
+
+  useEffect(() => {
+    if (city !== "") {
+      fetchStoreFilter();
+    }
+  }, [city]);
 
   const onClustering = () => {
     onClickClustering(nCluster);
@@ -116,12 +136,19 @@ const SelectCustomerStore = ({
             )
           }}
         />
+        <FormControl className={classes.formControl}>
+          <InputLabel>Filter</InputLabel>
+          <Select value={city} onChange={e => setCity(e.target.value)}>
+            <MenuItem value={"HaNoi"}>Hà Nội</MenuItem>
+            <MenuItem value={"HCM"}>Hồ Chí Minh</MenuItem>
+          </Select>
+        </FormControl>
         <Button
           variant="contained"
           color="primary"
           className={classes.button}
           onClick={onClustering}
-          disabled={parseInt(nCluster) === nClusterStore}
+          disabled={city === "" && parseInt(nCluster) === nClusterStore}
         >
           Clustering
         </Button>
@@ -175,10 +202,10 @@ const SelectCustomerStore = ({
                     <TableCell className={classes.tableHead}>
                       Store Name
                     </TableCell>
+                    <TableCell className={classes.tableHead}>Address</TableCell>
                     <TableCell className={classes.tableHead}>
                       Customer Name
                     </TableCell>
-                    <TableCell className={classes.tableHead}>Address</TableCell>
                     <TableCell className={classes.tableHead}></TableCell>
                     <TableCell className={classes.tableHead}></TableCell>
                   </TableRow>
@@ -214,14 +241,10 @@ const SelectCustomerStore = ({
         </div>
       ) : null}
 
-      {currentStore ? (
-        <div className={classes.margin}>
-          <GoogleMapDisplaySelectedStore
-            selectedStoreMap={selectedStoreMap}
-            currentStore={currentStore}
-          />
-        </div>
-      ) : null}
+      <GoogleMapVisualizeCluster
+        selectedStoreMap={selectedStoreMap}
+        currentStore={currentStore}
+      />
 
       <ChooseConfigDialog
         open={currentChosenStore ? true : false}
@@ -256,7 +279,16 @@ const mapDispatch = dispatch => ({
         GOT_CLUSTERING_LIST,
         GET_CLUSTERING_FAILED
       )
-    )
+    ),
+  onClusteringFilter: nCluster =>
+    dispatch(
+      apiGet(
+        `api/schedule/view-clustering-filter?nCluster=${nCluster}`,
+        GOT_CLUSTERING_LIST_FILTER,
+        GET_CLUSTERING_FILTER_FAILED
+      )
+    ),
+  fetchStoreFilter: () => dispatch(fetchStoreFilter())
 });
 
 export default connect(mapState, mapDispatch)(SelectCustomerStore);

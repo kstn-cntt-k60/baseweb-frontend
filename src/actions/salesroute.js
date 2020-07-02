@@ -20,6 +20,9 @@ export const ADDED_CONFIG = "ADDED_CONFIG";
 export const UPDATED_CONFIG = "UPDATED_CONFIG";
 export const DELETED_CONFIG = "DELETED_CONFIG";
 
+export const FIND_STORE_OF_SALESMAN = "FIND_STORE_OF_SALESMAN";
+export const FAILED_FIND_STORE_OF_SALESMAN = "FAILED_FIND_STORE_OF_SALESMAN";
+
 export const fetchSalesmanList = () => ({
   type: FETCH_SALESMAN_LIST
 });
@@ -45,4 +48,13 @@ export const fetchConfigList = () => ({
 export const configConfigTable = config => ({
   type: CONFIG_CONFIG_TABLE,
   config
+});
+
+export const findStoreOfSalesman = id => ({
+  type: FIND_STORE_OF_SALESMAN,
+  id
+});
+
+export const failedFindStoreOfSalesman = () => ({
+  type: FAILED_FIND_STORE_OF_SALESMAN
 });

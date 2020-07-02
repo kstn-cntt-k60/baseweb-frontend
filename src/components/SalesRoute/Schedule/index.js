@@ -142,8 +142,6 @@ const Schedule = ({ addSchedule }) => {
     setSalesman(null);
   };
 
-  console.log(stores);
-
   const customerStore = Object.values(stores).map(store => ({
     customerStoreId: store.id,
     configId: store.config.id
