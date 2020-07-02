@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
 
-import { configCustomerTable, fetchCustomerList } from "../../actions/account";
+import {
+  fetchSalesmanList,
+  configSalesmanTable
+} from "../../../actions/salesroute";
 
 import {
   Paper,
@@ -16,11 +19,10 @@ import {
   TablePagination,
   makeStyles
 } from "@material-ui/core";
-import { formatTime } from "../../util";
-
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
 import SearchIcon from "@material-ui/icons/Search";
+import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
+
+import { formatTime } from "../../../util";
 
 const useStyles = makeStyles(theme => ({
   tableHead: {
@@ -36,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     border: "solid",
     borderWidth: "1px",
     borderColor: focus ? "blue" : "#aaa",
-    boxShadow: focus ? "0 0 10px 0 blue" : "none",
+    boxShadow: focus ? "0 0 10px 0px blue" : "none",
     marginTop: theme.spacing(1),
     width: 500,
     borderRadius: "15px",
@@ -48,19 +50,21 @@ const useStyles = makeStyles(theme => ({
     border: "none",
     height: "35px",
     fontSize: theme.typography.htmlFontSize
+  },
+  tableSize: {
+    width: "500px"
   }
 }));
 
 const switchSortOrder = order => (order === "desc" ? "asc" : "desc");
 
-const CustomerTable = ({
+const SalesmanTable = ({
   entries,
-  count,
+  salesmanCount,
   config,
-  fetchCustomer,
+  fetchSalesman,
   configTable,
-  onEdit,
-  onDelete
+  onClickSelect
 }) => {
   const [text, setText] = useState(config.searchText);
   const [focus, setFocus] = useState(false);
@@ -68,7 +72,7 @@ const CustomerTable = ({
   const classes = useStyles({ focus });
 
   useEffect(() => {
-    fetchCustomer();
+    fetchSalesman();
   }, [config]);
 
   const onPageChange = (_, newPage) => {
@@ -79,9 +83,12 @@ const CustomerTable = ({
     configTable({ pageSize: e.target.value });
   };
 
+  const sortedBy = config.sortedBy;
+  const sortOrder = config.sortOrder;
+
   const onSortChange = name => {
-    if (name === config.sortedBy) {
-      configTable({ sortOrder: switchSortOrder(config.sortOrder) });
+    if (name === sortedBy) {
+      configTable({ sortOrder: switchSortOrder(sortOrder) });
     } else {
       configTable({ sortedBy: name });
     }
@@ -92,17 +99,14 @@ const CustomerTable = ({
     configTable({ searchText: text });
   };
 
-  const sortedBy = config.sortedBy;
-  const sortOrder = config.sortOrder;
-
   return (
-    <Paper>
+    <Paper className={classes.tableSize}>
       <form onSubmit={onSubmit}>
         <div className={classes.search}>
           <SearchIcon />
           <input
             className={classes.searchInput}
-            placeholder="Search Customer ..."
+            placeholder="Search Salesman ..."
             type="text"
             value={text}
             onChange={e => setText(e.target.value)}
@@ -117,53 +121,28 @@ const CustomerTable = ({
             <TableRow>
               <TableCell className={classes.tableHead}>
                 <TableSortLabel
-                  active={sortedBy === "name"}
-                  onClick={() => onSortChange("name")}
+                  active={text === "" && sortedBy === "username"}
+                  onClick={() => onSortChange("username")}
                   direction={sortOrder}
                 >
-                  Customer Name
+                  Username
                 </TableSortLabel>
               </TableCell>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={sortedBy === "createdAt"}
-                  onClick={() => onSortChange("createdAt")}
-                  direction={sortOrder}
-                >
-                  Created At
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={sortedBy === "updatedAt"}
-                  onClick={() => onSortChange("updatedAt")}
-                  direction={sortOrder}
-                >
-                  Updated At
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>Description</TableCell>
-              <TableCell className={classes.tableHead}></TableCell>
+              <TableCell className={classes.tableHead}>Created By</TableCell>
+
               <TableCell className={classes.tableHead}></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {entries.map(e => (
               <TableRow key={e.id}>
-                <TableCell>{e.name}</TableCell>
-                <TableCell>{e.createdAt}</TableCell>
-                <TableCell>{e.updatedAt}</TableCell>
-                <TableCell>{e.description}</TableCell>
+                <TableCell>{e.username}</TableCell>
+                <TableCell>{e.createdBy}</TableCell>
                 <TableCell>
-                  <EditIcon
+                  <PersonPinCircleIcon
+                    color="primary"
                     className={classes.iconButton}
-                    onClick={() => onEdit(e.id)}
-                  />
-                </TableCell>
-                <TableCell>
-                  <DeleteIcon
-                    className={classes.iconButton}
-                    onClick={() => onDelete(e.id)}
+                    onClick={() => onClickSelect(e.id)}
                   />
                 </TableCell>
               </TableRow>
@@ -174,7 +153,7 @@ const CustomerTable = ({
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={count}
+        count={salesmanCount}
         rowsPerPage={config.pageSize}
         page={config.page}
         onChangePage={onPageChange}
@@ -185,26 +164,26 @@ const CustomerTable = ({
 };
 
 const mapState = createSelector(
-  state => state.account.customerMap,
-  state => state.account.customerIdList,
-  state => state.account.customerCount,
-  state => state.account.customerTable,
-  (customerMap, customerIdList, count, config) => ({
-    entries: customerIdList
-      .map(id => customerMap[id])
-      .map(c => ({
-        ...c,
-        createdAt: formatTime(c.createdAt),
-        updatedAt: formatTime(c.updatedAt)
+  state => state.salesroute.salesmanMap,
+  state => state.salesroute.salesmanIdList,
+  state => state.salesroute.salesmanCount,
+  state => state.salesroute.salesmanTable,
+  (salesmanMap, salesmanIdList, salesmanCount, config) => ({
+    entries: salesmanIdList
+      .map(id => salesmanMap[id])
+      .map(p => ({
+        ...p,
+        createdAt: formatTime(p.createdAt),
+        updatedAt: formatTime(p.updatedAt)
       })),
-    count,
+    salesmanCount,
     config
   })
 );
 
 const mapDispatch = dispatch => ({
-  fetchCustomer: () => dispatch(fetchCustomerList()),
-  configTable: config => dispatch(configCustomerTable(config))
+  fetchSalesman: () => dispatch(fetchSalesmanList()),
+  configTable: config => dispatch(configSalesmanTable(config))
 });
 
-export default connect(mapState, mapDispatch)(CustomerTable);
+export default connect(mapState, mapDispatch)(SalesmanTable);

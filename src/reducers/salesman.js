@@ -11,7 +11,8 @@ import {
   CONFIG_CUSTOMER_TABLE,
   GOT_CUSTOMER_LIST,
   CONFIG_CHECKIN_HISTORY_TABLE,
-  GOT_CHECKIN_HISTORY_LIST
+  GOT_CHECKIN_HISTORY_LIST,
+  FIND_STORE_OF_SALESMAN
 } from "../actions/salesman";
 import { arrayToObjectWithId } from "../util";
 

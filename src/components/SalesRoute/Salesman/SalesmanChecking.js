@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 
-// import SelectPlanning from "./SelectPlanning";
-// import SelectCustomer from "./SelectCustomer";
 import SelectDetail from "./SelectDetail";
 import FinalStep from "./FinalStep";
 

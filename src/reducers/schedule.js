@@ -85,9 +85,16 @@ const initialState = {
     sortOrder: "desc"
   },
 
+  storeFilterMap: {},
+  storeFilterIdList: [],
+
   clusterMap: {},
   clusteringState: INIT,
   nClusterStore: 0,
+  clusterArray: [],
+
+  clusterFilterMap: {},
+  clusterFilterArray: [],
 
   addedScheduleSequence: 0,
   addScheduleFailedSequence: 0
@@ -220,7 +227,8 @@ const schedule = (state = initialState, action) => {
         ...state,
         clusteringState: LOADED,
         clusterMap: neighborsToMap(action.body),
-        nClusterStore: Object.keys(neighborsToMap(action.body)).length
+        nClusterStore: Object.keys(neighborsToMap(action.body)).length,
+        clusterArray: action.body
       };
 
     default:

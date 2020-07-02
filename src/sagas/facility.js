@@ -12,7 +12,10 @@ import {
   GOT_CUSTOMER_STORE_LIST,
   ADDED_CUSTOMER_STORE,
   UPDATED_CUSTOMER_STORE,
-  DELETED_CUSTOMER_STORE
+  DELETED_CUSTOMER_STORE,
+  FETCH_ALL_CUSTOMER_STORE,
+  GOT_ALL_CUSTOMER_STORE,
+  ADD_FAILED_CUSTOMER_STORE
 } from "../actions/facility";
 
 function* fetchWarehouseListSaga() {
@@ -64,10 +67,21 @@ function* fetchCustomerStoreListSaga() {
   );
 }
 
+function* fetchAllCustomerStoreSaga() {
+  yield put(
+    apiGet("/api/facility/view-all-customer-store", GOT_ALL_CUSTOMER_STORE)
+  );
+}
+
 function* addedCustomerStoreSaga() {
   const sequence = yield select(state => state.notifications.sequence);
   yield put(pushSuccessNotification(sequence, "Saved sucessfully"));
   yield* fetchCustomerStoreListSaga();
+}
+
+function* addFailedCustomerStoreSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushSuccessNotification(sequence, "Add Store Failed"));
 }
 
 function* updatedCustomerStoreSaga() {
@@ -89,7 +103,9 @@ function* facilitySaga() {
   yield takeEvery(DELETED_WAREHOUSE, deletedWarehouseSaga);
 
   yield takeEvery(FETCH_CUSTOMER_STORE_LIST, fetchCustomerStoreListSaga);
+  yield takeEvery(FETCH_ALL_CUSTOMER_STORE, fetchAllCustomerStoreSaga);
   yield takeEvery(ADDED_CUSTOMER_STORE, addedCustomerStoreSaga);
+  yield takeEvery(ADD_FAILED_CUSTOMER_STORE, addFailedCustomerStoreSaga);
   yield takeEvery(UPDATED_CUSTOMER_STORE, updatedCustomerStoreSaga);
   yield takeEvery(DELETED_CUSTOMER_STORE, deletedCustomerStoreSaga);
 }

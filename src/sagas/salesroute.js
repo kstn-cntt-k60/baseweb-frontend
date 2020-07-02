@@ -1,6 +1,11 @@
 import { takeEvery, put, select } from "redux-saga/effects";
 
-import { apiGet, urlWithParams, pushSuccessNotification } from "../actions";
+import {
+  apiGet,
+  urlWithParams,
+  pushSuccessNotification,
+  pushErrorNotification
+} from "../actions";
 import {
   GOT_SALESMAN_LIST,
   FETCH_SALESMAN_LIST,
@@ -13,9 +18,16 @@ import {
   GOT_CONFIG_LIST,
   ADDED_CONFIG,
   UPDATED_CONFIG,
-  DELETED_CONFIG
+  DELETED_CONFIG,
+  FIND_STORE_OF_SALESMAN,
+  FAILED_FIND_STORE_OF_SALESMAN
 } from "../actions/salesroute";
 import { DELETED_SALESMAN } from "../actions/salesman";
+import {
+  FETCH_PAIR_STORE_SALESMAN,
+  fetchPairStoreSalesman,
+  GOT_PAIR_STORE_SALESMAN
+} from "../actions/facility";
 
 function* fetchSalesmanListSaga() {
   const config = yield select(state => state.salesroute.salesmanTable);
@@ -102,6 +114,24 @@ function* deletedSalesmanSaga() {
   yield* fetchSalesmanListSaga();
 }
 
+function* findStoreOfSalesmanSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(
+    pushSuccessNotification(sequence, "Get Store Of Salesman sucessfully")
+  );
+}
+
+function* failedFindStoreOfSalesmanSaga() {
+  const sequence = yield select(state => state.notifications.sequence);
+  yield put(pushErrorNotification(sequence, "Get Store Of Salesman Failed!"));
+}
+
+function* fetchPairStoreSalesmanSaga() {
+  yield put(
+    apiGet("/api/sales-route/get-pair-store-salesman", GOT_PAIR_STORE_SALESMAN)
+  );
+}
+
 function* salesRouteSaga() {
   yield takeEvery(FETCH_SALESMAN_LIST, fetchSalesmanListSaga);
   yield takeEvery(FETCH_PLANNING_LIST, fetchPlanningListSaga);
@@ -114,6 +144,10 @@ function* salesRouteSaga() {
   yield takeEvery(UPDATED_CONFIG, updatedConfigSaga);
   yield takeEvery(DELETED_CONFIG, deletedConfigSaga);
   yield takeEvery(DELETED_SALESMAN, deletedSalesmanSaga);
+
+  yield takeEvery(FIND_STORE_OF_SALESMAN, findStoreOfSalesmanSaga);
+  yield takeEvery(FAILED_FIND_STORE_OF_SALESMAN, failedFindStoreOfSalesmanSaga);
+  yield takeEvery(FETCH_PAIR_STORE_SALESMAN, fetchPairStoreSalesmanSaga);
 }
 
 export default salesRouteSaga;
