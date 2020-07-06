@@ -89,7 +89,8 @@ const allowNext = (step, planning, stores, salesman) => {
       return salesman !== null;
 
     case 2:
-      return stores !== null;
+      return Object.values(stores).some(s => !s.config.id !== true);
+    //   return stores !== null;
 
     default:
       return true;
@@ -141,8 +142,6 @@ const Schedule = ({ addSchedule }) => {
     setStores({});
     setSalesman(null);
   };
-
-  console.log(stores);
 
   const customerStore = Object.values(stores).map(store => ({
     customerStoreId: store.id,

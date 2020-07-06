@@ -5,7 +5,8 @@ import { createSelector } from "reselect";
 import {
   configStoreTable,
   GOT_CLUSTERING_LIST,
-  GET_CLUSTERING_FAILED
+  GET_CLUSTERING_FAILED,
+  selectCity
 } from "../../../actions/schedule";
 
 import {
@@ -21,18 +22,26 @@ import {
   InputAdornment,
   Button,
   Typography,
-  Box
+  Box,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem
 } from "@material-ui/core";
 import { generate } from "../../../util";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import RoomIcon from "@material-ui/icons/Room";
 import { apiGet } from "../../../actions";
-import GoogleMapDisplaySelectedStore from "./GoogleMapDisplaySelectedStore";
 import ChooseConfigDialog from "./ChooseConfigDialog";
+import GoogleMapVisualizeCluster from "./GoogleMapVisualizeCluster";
 
 const useStyles = makeStyles(theme => ({
   tableHead: {
     fontWeight: "bold"
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120
   },
   row: {
     cursor: "pointer",
@@ -68,7 +77,9 @@ const SelectCustomerStore = ({
   nClusterStore,
   onClickClustering,
   stores,
-  onSelectStores
+  city,
+  onSelectStores,
+  setCity
 }) => {
   const classes = useStyles();
 
@@ -80,7 +91,7 @@ const SelectCustomerStore = ({
   const [currentChosenStore, setCurrentChosenStore] = useState(null);
 
   const onClustering = () => {
-    onClickClustering(nCluster);
+    onClickClustering(nCluster, city);
     setSelectedClusterId(null);
   };
 
@@ -116,12 +127,20 @@ const SelectCustomerStore = ({
             )
           }}
         />
+        <FormControl className={classes.formControl}>
+          <InputLabel>Filter</InputLabel>
+          <Select value={city} onChange={e => setCity(e.target.value)}>
+            <MenuItem value={""}>None</MenuItem>
+            <MenuItem value={"hanoi"}>Hà Nội</MenuItem>
+            <MenuItem value={"hcm"}>Hồ Chí Minh</MenuItem>
+          </Select>
+        </FormControl>
         <Button
           variant="contained"
           color="primary"
           className={classes.button}
           onClick={onClustering}
-          disabled={parseInt(nCluster) === nClusterStore}
+          disabled={city === "" && parseInt(nCluster) === nClusterStore}
         >
           Clustering
         </Button>
@@ -175,10 +194,10 @@ const SelectCustomerStore = ({
                     <TableCell className={classes.tableHead}>
                       Store Name
                     </TableCell>
+                    <TableCell className={classes.tableHead}>Address</TableCell>
                     <TableCell className={classes.tableHead}>
                       Customer Name
                     </TableCell>
-                    <TableCell className={classes.tableHead}>Address</TableCell>
                     <TableCell className={classes.tableHead}></TableCell>
                     <TableCell className={classes.tableHead}></TableCell>
                   </TableRow>
@@ -214,14 +233,11 @@ const SelectCustomerStore = ({
         </div>
       ) : null}
 
-      {currentStore ? (
-        <div className={classes.margin}>
-          <GoogleMapDisplaySelectedStore
-            selectedStoreMap={selectedStoreMap}
-            currentStore={currentStore}
-          />
-        </div>
-      ) : null}
+      <GoogleMapVisualizeCluster
+        selectedStoreMap={selectedStoreMap}
+        currentStore={currentStore}
+        city={city}
+      />
 
       <ChooseConfigDialog
         open={currentChosenStore ? true : false}
@@ -238,25 +254,28 @@ const mapState = createSelector(
   state => state.schedule.clusteringState,
   state => state.schedule.clusterMap,
   state => state.schedule.nClusterStore,
-  (clusteringState, clusterMap, nClusterStore) => {
+  state => state.schedule.selectedCity,
+  (clusteringState, clusterMap, nClusterStore, selectedCity) => {
     return {
       clusteringState,
       getCluster: index => clusterMap[index],
-      nClusterStore
+      nClusterStore,
+      city: selectedCity
     };
   }
 );
 
 const mapDispatch = dispatch => ({
   configTable: config => dispatch(configStoreTable(config)),
-  onClickClustering: nCluster =>
+  onClickClustering: (nCluster, city) =>
     dispatch(
       apiGet(
-        `/api/schedule/view-clustering?nCluster=${nCluster}`,
+        `/api/schedule/view-clustering?nCluster=${nCluster}&city=${city}`,
         GOT_CLUSTERING_LIST,
         GET_CLUSTERING_FAILED
       )
-    )
+    ),
+  setCity: city => dispatch(selectCity(city))
 });
 
 export default connect(mapState, mapDispatch)(SelectCustomerStore);

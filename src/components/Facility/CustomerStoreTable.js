@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { createSelector } from "reselect";
+import GoogleMapAllStore from "./GoogleMapAllStore";
 
 import {
   Paper,
@@ -17,6 +18,7 @@ import {
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SearchIcon from "@material-ui/icons/Search";
+import RoomIcon from "@material-ui/icons/Room";
 
 import {
   fetchCustomerStoreList,
@@ -70,6 +72,7 @@ const CustomerStoreTable = ({
 }) => {
   const [text, setText] = useState(searchText);
   const [focus, setFocus] = useState(false);
+  const [selectedStore, setSelectedStore] = useState(null);
 
   const classes = useStyles({ focus });
 
@@ -99,93 +102,109 @@ const CustomerStoreTable = ({
   };
 
   return (
-    <Paper>
-      <form onSubmit={onSubmit}>
-        <div className={classes.search}>
-          <SearchIcon />
-          <input
-            className={classes.searchInput}
-            placeholder="Search Customer Store ..."
-            type="text"
-            value={text}
-            onChange={e => setText(e.target.value)}
-            onFocus={() => setFocus(true)}
-            onBlur={() => setFocus(false)}
-          />
-        </div>
-      </form>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={text === "" && sortedBy === "name"}
-                  onClick={() => onSortChange("name")}
-                  direction={sortOrder}
-                >
-                  Store Name
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>Address</TableCell>
-              <TableCell className={classes.tableHead}>Customer Name</TableCell>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={text === "" && sortedBy === "createdAt"}
-                  onClick={() => onSortChange("createdAt")}
-                  direction={sortOrder}
-                >
-                  Created At
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}>
-                <TableSortLabel
-                  active={text === "" && sortedBy === "updatedAt"}
-                  onClick={() => onSortChange("updatedAt")}
-                  direction={sortOrder}
-                >
-                  Updated At
-                </TableSortLabel>
-              </TableCell>
-              <TableCell className={classes.tableHead}></TableCell>
-              <TableCell className={classes.tableHead}></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {entries.map(e => (
-              <TableRow key={e.id}>
-                <TableCell>{e.name}</TableCell>
-                <TableCell>{e.address}</TableCell>
-                <TableCell>{e.customer}</TableCell>
-                <TableCell>{e.createdAt}</TableCell>
-                <TableCell>{e.updatedAt}</TableCell>
-                <TableCell>
-                  <EditIcon
-                    className={classes.iconButton}
-                    onClick={() => onEdit(e.id)}
-                  />
+    <div>
+      <Paper>
+        <form onSubmit={onSubmit}>
+          <div className={classes.search}>
+            <SearchIcon />
+            <input
+              className={classes.searchInput}
+              placeholder="Search Customer Store ..."
+              type="text"
+              value={text}
+              onChange={e => setText(e.target.value)}
+              onFocus={() => setFocus(true)}
+              onBlur={() => setFocus(false)}
+            />
+          </div>
+        </form>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.tableHead}>
+                  <TableSortLabel
+                    active={text === "" && sortedBy === "name"}
+                    onClick={() => onSortChange("name")}
+                    direction={sortOrder}
+                  >
+                    Store Name
+                  </TableSortLabel>
                 </TableCell>
-                <TableCell>
-                  <DeleteIcon
-                    className={classes.iconButton}
-                    onClick={() => onDelete(e.id)}
-                  />
+                <TableCell className={classes.tableHead}>Address</TableCell>
+                <TableCell className={classes.tableHead}>
+                  Customer Name
                 </TableCell>
+                <TableCell className={classes.tableHead}>
+                  <TableSortLabel
+                    active={text === "" && sortedBy === "createdAt"}
+                    onClick={() => onSortChange("createdAt")}
+                    direction={sortOrder}
+                  >
+                    Created At
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell className={classes.tableHead}>
+                  <TableSortLabel
+                    active={text === "" && sortedBy === "updatedAt"}
+                    onClick={() => onSortChange("updatedAt")}
+                    direction={sortOrder}
+                  >
+                    Updated At
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell className={classes.tableHead}></TableCell>
+                <TableCell className={classes.tableHead}></TableCell>
+                <TableCell className={classes.tableHead}></TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={storeCount}
-        rowsPerPage={pageSize}
-        page={page}
-        onChangePage={onPageChange}
-        onChangeRowsPerPage={onPageSizeChange}
-      />
-    </Paper>
+            </TableHead>
+            <TableBody>
+              {entries.map(e => (
+                <TableRow key={e.id}>
+                  <TableCell>{e.name}</TableCell>
+                  <TableCell>{e.address}</TableCell>
+                  <TableCell>{e.customer}</TableCell>
+                  <TableCell>{e.createdAt}</TableCell>
+                  <TableCell>{e.updatedAt}</TableCell>
+                  <TableCell>
+                    <RoomIcon
+                      className={classes.iconButton}
+                      color="secondary"
+                      onClick={() => setSelectedStore(e)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <EditIcon
+                      className={classes.iconButton}
+                      onClick={() => onEdit(e.id)}
+                      color="primary"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <DeleteIcon
+                      className={classes.iconButton}
+                      onClick={() => onDelete(e.id)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={storeCount}
+          rowsPerPage={pageSize}
+          page={page}
+          onChangePage={onPageChange}
+          onChangeRowsPerPage={onPageSizeChange}
+        />
+      </Paper>
+      <div>
+        <GoogleMapAllStore selectedStore={selectedStore} />
+      </div>
+    </div>
   );
 };
 

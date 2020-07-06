@@ -32,6 +32,7 @@ import AddSalesman from "./components/SalesRoute/Salesman/AddSalesman";
 import SalesmanChecking from "./components/SalesRoute/Salesman/SalesmanChecking";
 import ScheduleIndex from "./components/SalesRoute/Salesman/ScheduleIndex";
 import AddCustomerStore from "./components/Facility/AddCustomerStore";
+import GoogleMapVisualize from "./components/SalesRoute/AssignVisualize/GoogleMapVisualize";
 
 const App = () => (
   <React.Fragment>
@@ -200,6 +201,12 @@ const App = () => (
         <PrivateRoute path="/salesman/schedule">
           <MainLayout>
             <ScheduleIndex />
+          </MainLayout>
+        </PrivateRoute>
+
+        <PrivateRoute path="/sales-route/assign-visualize">
+          <MainLayout>
+            <GoogleMapVisualize />
           </MainLayout>
         </PrivateRoute>
 

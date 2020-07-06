@@ -5,9 +5,11 @@ import {
   CONFIG_PLANNING_TABLE,
   GOT_PLANNING,
   CONFIG_CONFIG_TABLE,
-  GOT_CONFIG_LIST
+  GOT_CONFIG_LIST,
+  FIND_STORE_OF_SALESMAN
 } from "../actions/salesroute";
 import { arrayToObjectWithId } from "../util";
+import { GOT_PAIR_STORE_SALESMAN } from "../actions/facility";
 
 const initialState = {
   salesmanMap: {},
@@ -41,7 +43,10 @@ const initialState = {
     sortedBy: "updatedAt",
     sortOrder: "desc",
     searchText: ""
-  }
+  },
+
+  storeOfSalesman: {},
+  pairStoreSalesman: []
 };
 
 const salesroute = (state = initialState, action) => {
@@ -95,6 +100,18 @@ const salesroute = (state = initialState, action) => {
         configMap: arrayToObjectWithId(action.body.configList),
         configIdList: action.body.configList.map(s => s.id),
         configCount: action.body.configCount
+      };
+
+    case FIND_STORE_OF_SALESMAN:
+      return {
+        ...state,
+        storeOfSalesman: arrayToObjectWithId(action.body.listStore)
+      };
+
+    case GOT_PAIR_STORE_SALESMAN:
+      return {
+        ...state,
+        pairStoreSalesman: action.body.pairStoreSalesman
       };
     default:
       return state;

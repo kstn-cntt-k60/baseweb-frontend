@@ -150,15 +150,6 @@ const ScheduleTable = ({
                     Created At
                   </TableSortLabel>
                 </StyledTableCell>
-                <StyledTableCell className={classes.tableHead}>
-                  <TableSortLabel
-                    active={sortedBy === "updatedAt"}
-                    onClick={() => onSortChange("updatedAt")}
-                    direction={sortOrder}
-                  >
-                    Updated At
-                  </TableSortLabel>
-                </StyledTableCell>
                 <StyledTableCell
                   className={classes.tableHead}
                 ></StyledTableCell>
@@ -181,7 +172,6 @@ const ScheduleTable = ({
                   <StyledTableCell>{e.repeatWeek}</StyledTableCell>
                   <StyledTableCell>{e.dayList}</StyledTableCell>
                   <StyledTableCell>{e.createdAt}</StyledTableCell>
-                  <StyledTableCell>{e.updatedAt}</StyledTableCell>
                   <StyledTableCell>
                     <DeleteIcon
                       className={classes.iconButton}

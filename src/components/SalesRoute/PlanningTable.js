@@ -113,7 +113,7 @@ const PlanningTable = ({
 
   return (
     <Paper>
-      <form onSubmit={onSubmit}>
+      {/* <form onSubmit={onSubmit}>
         <div className={classes.search}>
           <SearchIcon />
           <input
@@ -126,7 +126,7 @@ const PlanningTable = ({
             onBlur={() => setFocus(false)}
           />
         </div>
-      </form>
+      </form> */}
       <TableContainer>
         <Table>
           <TableHead>

@@ -5,7 +5,8 @@ import {
   CONFIG_WAREHOUSE_TABLE,
   GOT_CUSTOMER_STORE_LIST,
   CONFIG_CUSTOMER_STORE_TABLE,
-  GOT_SEARCH_CUSTOMER
+  GOT_SEARCH_CUSTOMER,
+  GOT_ALL_CUSTOMER_STORE
 } from "../actions/facility";
 
 const initialState = {
@@ -26,6 +27,8 @@ const initialState = {
   storeSortedBy: "createdAt",
   storeSortOrder: "desc",
   storeSearchText: "",
+
+  allCustomerStore: {},
 
   customerList: [],
   customerListSequence: 0
@@ -74,6 +77,12 @@ const facility = (state = initialState, action) => {
         ...state,
         customerList: action.body,
         customerListSequence: state.customerListSequence + 1
+      };
+
+    case GOT_ALL_CUSTOMER_STORE:
+      return {
+        ...state,
+        allCustomerStore: arrayToObjectWithId(action.body.listAllStore)
       };
 
     default:

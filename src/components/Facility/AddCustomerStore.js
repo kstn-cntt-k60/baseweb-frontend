@@ -16,7 +16,8 @@ import {
 import { apiGet, apiPost } from "../../actions";
 import {
   ADDED_CUSTOMER_STORE,
-  GOT_SEARCH_CUSTOMER
+  GOT_SEARCH_CUSTOMER,
+  ADD_FAILED_CUSTOMER_STORE
 } from "../../actions/facility";
 
 import SearchIcon from "@material-ui/icons/Search";
@@ -101,6 +102,7 @@ const AddCustomerStore = ({
   const [sequence, setSequence] = useState(customerListSequence);
   const [openMap, setOpenMap] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
+  const [noti, setNoti] = useState("");
 
   const history = useHistory();
   const classes = useStyles({ focus });
@@ -113,14 +115,18 @@ const AddCustomerStore = ({
   };
 
   const onSave = () => {
-    saveCustomerStore({
-      name,
-      address: addr,
-      latitude: coordinates.lat,
-      longitude: coordinates.lng,
-      customerId: chosenCustomer.id
-    });
-    history.push("/facility/customer-store");
+    if (coordinates) {
+      saveCustomerStore({
+        name,
+        address: addr,
+        latitude: coordinates.lat,
+        longitude: coordinates.lng,
+        customerId: chosenCustomer.id
+      });
+      history.push("/facility/customer-store");
+    } else {
+      setNoti("Choose one location!");
+    }
   };
 
   const onSearch = e => {
@@ -227,6 +233,7 @@ const AddCustomerStore = ({
         ) : null}
       </div>
       <DialogActions>
+        <span>{noti}</span>
         <Button
           onClick={onCancel}
           disabled={cancelDisabled}
@@ -256,7 +263,12 @@ const mapState = state => ({
 const mapDispatch = dispatch => ({
   saveCustomerStore: body =>
     dispatch(
-      apiPost("/api/facility/add-customer-store", body, ADDED_CUSTOMER_STORE)
+      apiPost(
+        "/api/facility/add-customer-store",
+        body,
+        ADDED_CUSTOMER_STORE,
+        ADD_FAILED_CUSTOMER_STORE
+      )
     ),
   searchCustomer: query =>
     dispatch(
